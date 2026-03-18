@@ -1452,7 +1452,7 @@ function renderProducts() {
       <div class="product-img">
         <div class="product-img-clip">
           <div class="product-img-inner">
-            <img src="${p.img}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:56px>'+p.icon+'</span>'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover;display:block">
+            <img src="${p.img}" loading="lazy" onerror="this.style.display='none'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover;display:block">
           </div>
           ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
           <div class="product-cat-badge">${catLabels[p.cat]}</div>
@@ -1852,7 +1852,7 @@ function openProductModal(id) {
   currentModalProductId = id;
   const T = t[lang];
   document.getElementById('modalImg').className = 'modal-img';
-  document.getElementById('modalImg').innerHTML = `<img src="${p.img}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:56px>'+p.icon+'</span>'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover">`;
+  document.getElementById('modalImg').innerHTML = `<img src="${p.img}" loading="lazy" onerror="this.style.display='none'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover">`;
   document.getElementById('modalBadge').textContent = p.badge;
   document.getElementById('modalName').textContent = lang==='ar'?p.ar:p.en;
   document.getElementById('modalNameSub').textContent = lang==='ar'?p.en:p.ar;
@@ -1913,7 +1913,7 @@ function renderWishlistPage() {
         <div class="product-img">
           <div class="product-img-clip">
             <div class="product-img-inner" onclick="closePage('wishlistPage');openProductModal(${p.id})" style="cursor:pointer">
-              <img src="${p.img}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:56px>'+p.icon+'</span>'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover">
+              <img src="${p.img}" loading="lazy" onerror="this.style.display='none'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover">
             </div>
           </div>
           <div class="product-actions">
@@ -1959,7 +1959,7 @@ function renderAccountWishlist() {
       <div class="product-card">
         <div class="product-img">
           <div class="product-img-clip">
-            <div class="product-img-inner"><img src="${p.img}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:56px>'+p.icon+'</span>'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover"></div>
+            <div class="product-img-inner"><img src="${p.img}" loading="lazy" onerror="this.style.display='none'" alt="${lang==='ar'?p.ar:p.en}" style="width:100%;height:100%;object-fit:cover"></div>
           </div>
           <div class="product-actions"><button class="add-to-cart" onclick="addToCart(${p.id})">${T.addToCart}</button></div>
         </div>
@@ -2051,7 +2051,6 @@ function toggleMenu() {
 // ===== ENHANCED addToCart with animation =====
 function addToCart(productId) {
   _addToCartBase(productId);
-  _origAddToCart(productId);
   // Bump cart badge
   const badge = document.getElementById('cartCount');
   if (badge) {
