@@ -5,6 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لمسة | لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ======= ضع إعدادات Firebase هنا =======
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
+    authDomain: "lamsa-store-6b22a.firebaseapp.com",
+    projectId: "lamsa-store-6b22a",
+    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
+    messagingSenderId: "954405056528",
+    appId: "1:954405056528:web:8b988274f315376c4c9a95"
+  };
+  // =========================================
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // استماع للطلبات الجديدة بشكل لحظي
+  const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const fbOrders = snapshot.docs.map(d => ({ _docId: d.id, ...d.data() }));
+    if (fbOrders.length > 0) {
+      window.orders = fbOrders;
+      if (typeof renderOrdersTable === "function") renderOrdersTable("all");
+      if (typeof renderRecentOrders === "function") renderRecentOrders();
+      const prev = parseInt(localStorage.getItem("lamsa_count") || "0");
+      if (fbOrders.length > prev) {
+        const n = document.getElementById("dashNotif");
+        if(n){ n.textContent = "🔔 طلب جديد وصل!"; n.style.opacity = "1"; setTimeout(()=>n.style.opacity="0", 4000); }
+        document.title = "("+fbOrders.length+") طلب جديد | لمسة";
+        localStorage.setItem("lamsa_count", fbOrders.length);
+      }
+    }
+  });
+
+  window.updateOrderStatusFirebase = async (docId, newStatus) => {
+    if (!docId) return;
+    await updateDoc(doc(db, "orders", docId), { status: newStatus });
+  };
+</script>
 <style>
 :root {
   --bg: #0F0F0F;
@@ -307,7 +349,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
       <div class="admin-avatar">👩</div>
       <div class="admin-info">
         <p>المدير</p>
-        <span>admin@lamsa.com</span>
+        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1d0d5dcd8dff1ddd0dcc2d09fd2dedc">[email&#160;protected]</a></span>
       </div>
     </div>
   </div>
@@ -579,7 +621,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 <!-- Toast notification -->
 <div id="dashNotif" style="position:fixed;bottom:24px;left:24px;background:#1E1E1E;border:1px solid var(--border);border-right:3px solid var(--accent);color:var(--text);padding:14px 20px;border-radius:8px;font-size:14px;font-family:'Tajawal',sans-serif;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;min-width:240px"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===== DATA =====
 let products = [
   { id:1,  ar:'ساعة كلاسيك ذهبية',  en:'Gold Classic Watch',     price:1450, oldPrice:1900, cat:'unisex', stock:18, badge:'جديد',  icon:'⌚', img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&q=70' },
@@ -702,8 +744,14 @@ function renderOrdersTable(filter) {
 }
 
 function updateOrderStatus(idx, newStatus) {
-  orders[idx].status = newStatus;
+  const order = orders[idx];
+  order.status = newStatus;
+  // حفظ في Firebase
+  if (order._docId && window.updateOrderStatusFirebase) {
+    window.updateOrderStatusFirebase(order._docId, newStatus);
+  }
   showNotif(`✅ تم تحديث حالة الطلب إلى: ${statusLabels[newStatus]}`);
+  renderOrdersTable(currentOrderFilter);
 }
 
 // ===== INVENTORY TABLE =====
@@ -807,14 +855,4 @@ function showNotif(msg) {
   const n = document.getElementById('dashNotif');
   n.textContent = msg; n.style.opacity = '1';
   clearTimeout(n._t);
-  n._t = setTimeout(() => n.style.opacity = '0', 3000);
-}
-
-function exportData() { showNotif('⬇️ جاري تصدير البيانات...'); }
-
-// ===== INIT =====
-renderBarChart();
-renderRecentOrders();
-</script>
-</body>
-</html>
+  n._t 

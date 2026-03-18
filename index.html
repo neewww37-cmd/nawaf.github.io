@@ -9,6 +9,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>لمسة | Lamsa</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Tajawal:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ======= ضع إعدادات Firebase هنا =======
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
+    authDomain: "lamsa-store-6b22a.firebaseapp.com",
+    projectId: "lamsa-store-6b22a",
+    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
+    messagingSenderId: "954405056528",
+    appId: "1:954405056528:web:8b988274f315376c4c9a95"
+  };
+  // =========================================
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._addDoc = addDoc;
+  window._collection = collection;
+  window._serverTimestamp = serverTimestamp;
+</script>
 <style>
   :root {
     --cream: #F4EFE8;
@@ -1625,15 +1648,50 @@ function selectPayment(type, el) {
   document.getElementById('step2').className = 'step done';
 }
 
-function placeOrder() {
+async function placeOrder() {
   if (!selectedPayment) {
     showNotification(lang==='ar' ? '⚠️ اختاري طريقة الدفع أولاً' : '⚠️ Please select a payment method');
     return;
   }
+
+  // جمع بيانات العميل من النموذج
+  const customerName = document.getElementById('fname')?.value || document.querySelector('input[placeholder*="اسم"]')?.value || 'عميل';
+  const customerPhone = document.getElementById('fphone')?.value || document.querySelector('input[type="tel"]')?.value || '';
+  const customerCity = document.getElementById('fcity')?.value || document.querySelector('input[placeholder*="مدينة"]')?.value || '';
+
+  const subtotal = cartItems.reduce((s,i) => s + i.priceNum * i.qty, 0);
+  const discount = discountApplied ? Math.round(subtotal * 0.1) : 0;
+  const vat = Math.round((subtotal - discount) * 0.15);
+  const total = subtotal - discount + vat;
+  const orderNum = '#ORD-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+
+  // حفظ الطلب في Firebase
+  try {
+    if (window._db) {
+      await window._addDoc(window._collection(window._db, 'orders'), {
+        id: orderNum,
+        customer: customerName,
+        phone: customerPhone,
+        city: customerCity,
+        items: cartItems.map(i => `${lang==='ar'?i.ar:i.en} × ${i.qty}`).join(', '),
+        itemsDetail: cartItems.map(i => ({ name: i.ar, nameEn: i.en, qty: i.qty, price: i.priceNum })),
+        subtotal,
+        discount,
+        vat,
+        total,
+        payment: selectedPayment,
+        status: 'pending',
+        lang,
+        createdAt: window._serverTimestamp()
+      });
+    }
+  } catch(e) {
+    console.log('Firebase error:', e);
+  }
+
   document.getElementById('step3').className = 'step done';
   document.getElementById('checkoutBody').style.display = 'none';
   document.getElementById('successScreen').classList.add('show');
-  const orderNum = '#ORD-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
   document.getElementById('orderNum').textContent = orderNum;
 }
 
