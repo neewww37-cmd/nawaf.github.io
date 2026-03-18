@@ -5,48 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لمسة | لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  // ======= ضع إعدادات Firebase هنا =======
-  const firebaseConfig = {
-    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
-    authDomain: "lamsa-store-6b22a.firebaseapp.com",
-    projectId: "lamsa-store-6b22a",
-    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
-    messagingSenderId: "954405056528",
-    appId: "1:954405056528:web:8b988274f315376c4c9a95"
-  };
-  // =========================================
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // استماع للطلبات الجديدة بشكل لحظي
-  const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-  onSnapshot(q, (snapshot) => {
-    const fbOrders = snapshot.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    if (fbOrders.length > 0) {
-      window.orders = fbOrders;
-      if (typeof renderOrdersTable === "function") renderOrdersTable("all");
-      if (typeof renderRecentOrders === "function") renderRecentOrders();
-      const prev = parseInt(localStorage.getItem("lamsa_count") || "0");
-      if (fbOrders.length > prev) {
-        const n = document.getElementById("dashNotif");
-        if(n){ n.textContent = "🔔 طلب جديد وصل!"; n.style.opacity = "1"; setTimeout(()=>n.style.opacity="0", 4000); }
-        document.title = "("+fbOrders.length+") طلب جديد | لمسة";
-        localStorage.setItem("lamsa_count", fbOrders.length);
-      }
-    }
-  });
-
-  window.updateOrderStatusFirebase = async (docId, newStatus) => {
-    if (!docId) return;
-    await updateDoc(doc(db, "orders", docId), { status: newStatus });
-  };
-</script>
 <style>
 :root {
   --bg: #0F0F0F;
@@ -303,6 +261,43 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 .stock-bar { height:4px; background:var(--border); border-radius:2px; margin-top:4px; overflow:hidden; }
 .stock-fill { height:100%; border-radius:2px; transition:width 0.5s ease; }
 </style>
+<!-- Firebase Compat (works with regular scripts) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
+    authDomain: "lamsa-store-6b22a.firebaseapp.com",
+    projectId: "lamsa-store-6b22a",
+    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
+    messagingSenderId: "954405056528",
+    appId: "1:954405056528:web:8b988274f315376c4c9a95"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // استماع للطلبات الجديدة بشكل لحظي
+  db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+    const fbOrders = snapshot.docs.map(d => ({ _docId: d.id, ...d.data() }));
+    if (fbOrders.length > 0) {
+      window.orders = fbOrders;
+      if (typeof renderOrdersTable === "function") renderOrdersTable("all");
+      if (typeof renderRecentOrders === "function") renderRecentOrders();
+      const prev = parseInt(localStorage.getItem("lamsa_count") || "0");
+      if (fbOrders.length > prev) {
+        const n = document.getElementById("dashNotif");
+        if(n){ n.textContent = "🔔 طلب جديد وصل!"; n.style.opacity = "1"; setTimeout(()=>n.style.opacity="0", 4000); }
+        document.title = "("+fbOrders.length+") طلب جديد | لمسة";
+        localStorage.setItem("lamsa_count", fbOrders.length);
+      }
+    }
+  });
+
+  window.updateOrderStatusFirebase = async (docId, newStatus) => {
+    if (!docId) return;
+    await db.collection("orders").doc(docId).update({ status: newStatus });
+  };
+</script>
 </head>
 <body>
 
@@ -349,7 +344,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
       <div class="admin-avatar">👩</div>
       <div class="admin-info">
         <p>المدير</p>
-        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1d0d5dcd8dff1ddd0dcc2d09fd2dedc">[email&#160;protected]</a></span>
+        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2746434a4e49674b464a54460944484a">[email&#160;protected]</a></span>
       </div>
     </div>
   </div>
@@ -746,7 +741,6 @@ function renderOrdersTable(filter) {
 function updateOrderStatus(idx, newStatus) {
   const order = orders[idx];
   order.status = newStatus;
-  // حفظ في Firebase
   if (order._docId && window.updateOrderStatusFirebase) {
     window.updateOrderStatusFirebase(order._docId, newStatus);
   }

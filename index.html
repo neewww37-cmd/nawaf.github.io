@@ -9,29 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>لمسة | Lamsa</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Tajawal:wght@300;400;500&display=swap" rel="stylesheet">
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  // ======= ضع إعدادات Firebase هنا =======
-  const firebaseConfig = {
-    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
-    authDomain: "lamsa-store-6b22a.firebaseapp.com",
-    projectId: "lamsa-store-6b22a",
-    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
-    messagingSenderId: "954405056528",
-    appId: "1:954405056528:web:8b988274f315376c4c9a95"
-  };
-  // =========================================
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  window._db = db;
-  window._addDoc = addDoc;
-  window._collection = collection;
-  window._serverTimestamp = serverTimestamp;
-</script>
 <style>
   :root {
     --cream: #F4EFE8;
@@ -810,6 +787,21 @@
   .nav-icon:hover { color: var(--accent); }
   @media (max-width: 600px) { .account-tabs { gap: 0; } .address-cards { grid-template-columns: 1fr; } .profile-form { grid-template-columns: 1fr; } }
 </style>
+<!-- Firebase Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
+    authDomain: "lamsa-store-6b22a.firebaseapp.com",
+    projectId: "lamsa-store-6b22a",
+    storageBucket: "lamsa-store-6b22a.firebasestorage.app",
+    messagingSenderId: "954405056528",
+    appId: "1:954405056528:web:8b988274f315376c4c9a95"
+  };
+  firebase.initializeApp(firebaseConfig);
+  window._db = firebase.firestore();
+</script>
 </head>
 <body>
 
@@ -1649,15 +1641,29 @@ function selectPayment(type, el) {
 }
 
 async function placeOrder() {
+  // التحقق من الحقول الإجبارية
+  const _fname = document.getElementById('inp-fname')?.value.trim();
+  const _lname = document.getElementById('inp-lname')?.value.trim();
+  const _phone = document.getElementById('inp-phone')?.value.trim();
+  if (!_fname && !_lname) {
+    showNotification(lang==='ar' ? '⚠️ الاسم مطلوب' : '⚠️ Name is required');
+    document.getElementById('inp-fname')?.focus();
+    return;
+  }
+  if (!_phone) {
+    showNotification(lang==='ar' ? '⚠️ رقم الجوال مطلوب' : '⚠️ Phone number is required');
+    document.getElementById('inp-phone')?.focus();
+    return;
+  }
+  // التحقق من كود OTP
+  if (!window._otpVerified) {
+    showOTPModal(_phone);
+    return;
+  }
   if (!selectedPayment) {
     showNotification(lang==='ar' ? '⚠️ اختاري طريقة الدفع أولاً' : '⚠️ Please select a payment method');
     return;
   }
-
-  // جمع بيانات العميل من النموذج
-  const customerName = document.getElementById('fname')?.value || document.querySelector('input[placeholder*="اسم"]')?.value || 'عميل';
-  const customerPhone = document.getElementById('fphone')?.value || document.querySelector('input[type="tel"]')?.value || '';
-  const customerCity = document.getElementById('fcity')?.value || document.querySelector('input[placeholder*="مدينة"]')?.value || '';
 
   const subtotal = cartItems.reduce((s,i) => s + i.priceNum * i.qty, 0);
   const discount = discountApplied ? Math.round(subtotal * 0.1) : 0;
@@ -1668,26 +1674,19 @@ async function placeOrder() {
   // حفظ الطلب في Firebase
   try {
     if (window._db) {
-      await window._addDoc(window._collection(window._db, 'orders'), {
+      await window._db.collection('orders').add({
         id: orderNum,
-        customer: customerName,
-        phone: customerPhone,
-        city: customerCity,
-        items: cartItems.map(i => `${lang==='ar'?i.ar:i.en} × ${i.qty}`).join(', '),
-        itemsDetail: cartItems.map(i => ({ name: i.ar, nameEn: i.en, qty: i.qty, price: i.priceNum })),
-        subtotal,
-        discount,
-        vat,
-        total,
+        customer: document.querySelector('input[placeholder*="الاسم"], input[placeholder*="Name"]')?.value || 'عميل',
+        phone: document.querySelector('input[type="tel"]')?.value || '',
+        city: document.querySelector('input[placeholder*="المدينة"], input[placeholder*="City"]')?.value || '',
+        items: cartItems.map(i => (lang==='ar'?i.ar:i.en) + ' × ' + i.qty).join(', '),
+        subtotal, discount, vat, total,
         payment: selectedPayment,
         status: 'pending',
-        lang,
-        createdAt: window._serverTimestamp()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
-  } catch(e) {
-    console.log('Firebase error:', e);
-  }
+  } catch(e) { console.log('Firebase error:', e); }
 
   document.getElementById('step3').className = 'step done';
   document.getElementById('checkoutBody').style.display = 'none';
@@ -2048,6 +2047,58 @@ function showNotification(msg) {
     setTimeout(() => n.classList.remove('hide'), 300);
   }, 3000);
 }
+</script>
+
+<!-- OTP Modal -->
+<div id="otpModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:var(--warm-white);padding:40px;border-radius:4px;max-width:380px;width:90%;text-align:center;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px" id="otp-title">تأكيد رقم الجوال</h3>
+    <p style="color:var(--taupe);font-size:13px;margin-bottom:24px" id="otp-sub">أدخل كود التحقق المرسل إلى جوالك</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+      <input id="otp-inp" type="number" maxlength="4" placeholder="XXXX"
+        style="width:120px;text-align:center;font-size:24px;letter-spacing:8px;padding:12px;border:1px solid var(--light-taupe);border-radius:4px;font-family:'Tajawal',sans-serif;background:var(--cream)">
+    </div>
+    <button onclick="verifyOTP()" style="width:100%;padding:14px;background:var(--charcoal);color:white;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:12px" id="otp-btn">تأكيد</button>
+    <button onclick="closeOTPModal()" style="background:none;border:none;color:var(--taupe);cursor:pointer;font-family:'Tajawal',sans-serif;font-size:13px" id="otp-cancel">إلغاء</button>
+  </div>
+</div>
+
+<script>
+window._otpVerified = false;
+
+function showOTPModal(phone) {
+  // مؤقتاً: الكود الثابت 1234
+  window._currentOTP = '1234';
+  document.getElementById('otp-sub').textContent = (lang==='ar' ? 'أدخل كود التحقق لرقم: ' : 'Enter the code sent to: ') + phone;
+  document.getElementById('otpModal').style.display = 'flex';
+  document.getElementById('otp-inp').value = '';
+  document.getElementById('otp-inp').focus();
+}
+
+function verifyOTP() {
+  const entered = document.getElementById('otp-inp').value.trim();
+  if (entered === window._currentOTP) {
+    window._otpVerified = true;
+    closeOTPModal();
+    showNotification(lang==='ar' ? '✅ تم التحقق بنجاح' : '✅ Verified successfully');
+    setTimeout(() => placeOrder(), 300);
+  } else {
+    showNotification(lang==='ar' ? '❌ الكود غير صحيح' : '❌ Incorrect code');
+    document.getElementById('otp-inp').value = '';
+    document.getElementById('otp-inp').focus();
+  }
+}
+
+function closeOTPModal() {
+  document.getElementById('otpModal').style.display = 'none';
+}
+
+// Allow Enter key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('otpModal').style.display === 'flex') {
+    verifyOTP();
+  }
+});
 </script>
 </body>
 </html>
