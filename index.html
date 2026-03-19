@@ -843,7 +843,7 @@
   <div class="nav-icons">
     <button class="nav-icon" onclick="openSearch()" title="بحث">🔍</button>
     <button class="nav-icon" onclick="openWishlist()" title="المفضلة">🤍</button>
-    <button class="nav-icon" onclick="window._currentUser ? openAccount() : openAuthModal(false)" title="حسابي">👤</button>
+    <button class="nav-icon" onclick="handleAccountClick()" title="حسابي">👤</button>
     <button class="cart-nav-btn" onclick="openCart()">
       <span id="cart-btn-txt">سلة التسوق</span>
       <span class="cart-icon-wrap">🛒<span class="cart-count" id="cartCount">0</span></span>
@@ -1938,7 +1938,17 @@ function removeFromWishlistPage(id) {
 
 // ===== ACCOUNT PAGE =====
 function openAccount() {
+  if (!window._currentUser) {
+    openAuthModal(false);
+    return;
+  }
   renderAccountWishlist();
+  // عرض بيانات المستخدم
+  const user = window._currentUser;
+  const nameEl = document.getElementById('acct-user-name');
+  const emailEl = document.getElementById('acct-user-email');
+  if (nameEl) nameEl.textContent = user.displayName || user.email || '';
+  if (emailEl) emailEl.textContent = user.email || '';
   document.getElementById('accountPage').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -2242,6 +2252,17 @@ function verifyOTP() {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && document.getElementById('otpModal').style.display === 'flex') verifyOTP();
 });
+</script>
+
+<script>
+function handleAccountClick() {
+  if (firebase.auth().currentUser) {
+    window._currentUser = firebase.auth().currentUser;
+    openAccount();
+  } else {
+    openAuthModal(false);
+  }
+}
 </script>
 </body>
 </html>
