@@ -1028,6 +1028,7 @@
       <div class="account-avatar">👩</div>
       <div class="account-name">
         <h2 id="acct-name">نورة العمري</h2>
+        <button onclick="doLogout();closePage('accountPage')" style="margin-top:8px;background:none;border:1px solid var(--light-taupe);padding:6px 16px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:12px;color:var(--taupe);border-radius:2px">تسجيل الخروج 🚪</button>
         <p id="acct-user-email" style="color:var(--taupe);font-size:13px"></p>
       </div>
     </div>
@@ -1080,7 +1081,7 @@
       <div class="profile-form">
         <div class="form-field"><label id="pf-fname">الاسم الأول</label><input type="text" value="نورة"></div>
         <div class="form-field"><label id="pf-lname">اسم العائلة</label><input type="text" value="العمري"></div>
-        <div class="form-field"><label id="pf-email">البريد الإلكتروني</label><input type="email" value="noura@email.com"></div>
+        <div class="form-field"><label id="pf-email">البريد الإلكتروني</label><input type="email" id="pf-email-input" value=""></div>
         <div class="form-field"><label id="pf-phone">رقم الجوال</label><input type="tel" value="+966 5X XXX XXXX"></div>
         <div class="form-field full"><label id="pf-bday">تاريخ الميلاد</label><input type="date"></div>
         <button class="save-profile-btn" onclick="showNotification(lang==='ar'?'✓ تم حفظ معلوماتك':'✓ Profile saved!')" id="save-profile-btn">حفظ التغييرات</button>
@@ -1234,7 +1235,7 @@
             <div class="form-field"><label id="lbl-fname">الاسم الأول</label><input type="text" id="inp-fname" placeholder="نورة"></div>
             <div class="form-field"><label id="lbl-lname">اسم العائلة</label><input type="text" id="inp-lname" placeholder="العمري"></div>
             <div class="form-field"><label id="lbl-phone">رقم الجوال</label><input type="tel" id="inp-phone" placeholder="+966 5X XXX XXXX"></div>
-            <div class="form-field"><label id="lbl-email">البريد الإلكتروني</label><input type="email" id="inp-email" placeholder="noura@email.com"></div>
+            <div class="form-field"><label id="lbl-email">البريد الإلكتروني</label><input type="email" id="inp-email" placeholder="البريد الإلكتروني"></div>
             <div class="form-field full"><label id="lbl-city">المدينة</label>
               <select id="inp-city">
                 <option value="">اختاري المدينة...</option>
@@ -1350,7 +1351,7 @@
 
 <div class="notification" id="notification"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const products = [
   { id:1,  ar:'ساعة كلاسيك ذهبية',   en:'Gold Classic Watch',      priceAr:'١٤٥٠ ر.س', priceEn:'1450 SAR', priceNum:1450, oldAr:'١٩٠٠ ر.س', oldEn:'1900 SAR', badge:'جديد / New',                 bg:'p1', icon:'⌚', cat:'unisex', img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=85&fit=crop' },
   { id:2,  ar:'محفظة جلد إيطالي',     en:'Italian Leather Wallet',  priceAr:'٣٨٠ ر.س',  priceEn:'380 SAR',  priceNum:380,  oldAr:'',         oldEn:'',         badge:'',                            bg:'p2', icon:'👛', cat:'women',  img:'https://images.unsplash.com/photo-1627123424574-724758594785?w=600&q=85&fit=crop' },
@@ -1950,11 +1951,8 @@ function openAccount() {
   if (nameEl) nameEl.textContent = user.displayName || user.email || '';
   if (emailEl) emailEl.textContent = user.email || '';
   // ملء نموذج المعلومات
-  const pfFname = document.getElementById('pf-fname');
-  if (pfFname && user.displayName) {
-    const parts = user.displayName.split(' ');
-    pfFname.nextElementSibling && (pfFname.nextElementSibling.value = parts[0] || '');
-  }
+  const pfEmailInput = document.getElementById('pf-email-input');
+  if (pfEmailInput) pfEmailInput.value = user.email || '';
   document.getElementById('accountPage').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
