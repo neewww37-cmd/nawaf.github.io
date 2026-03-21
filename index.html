@@ -3197,13 +3197,20 @@ document.addEventListener('DOMContentLoaded', function() {
     splash.style.display = 'none';
     return;
   }
+  // Hide after 2 seconds
   setTimeout(function() {
-    splash.classList.add('hide');
+    splash.style.opacity = '0';
+    splash.style.transition = 'opacity 0.5s ease';
     setTimeout(function() {
       splash.style.display = 'none';
       sessionStorage.setItem('lamsa_visited', '1');
-    }, 600);
-  }, 2200);
+    }, 500);
+  }, 1800);
+  // Safety: force hide after 4 seconds no matter what
+  setTimeout(function() {
+    splash.style.display = 'none';
+    sessionStorage.setItem('lamsa_visited', '1');
+  }, 4000);
 })();
 
 // ===== DARK/LIGHT MODE =====
