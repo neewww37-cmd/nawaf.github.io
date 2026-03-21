@@ -1846,7 +1846,8 @@ function filterProducts(cat, btn) {
   currentFilter = cat;
   document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderProductsFiltered();
+  if (typeof renderProductsFiltered === 'function') renderProductsFiltered();
+  else renderProducts();
 }
 
 function renderProducts() {
@@ -2809,7 +2810,7 @@ function renderProductCard(p, T, catLabels) {
     '<div class="product-img">' +
       '<div class="product-img-clip">' +
         '<div class="product-img-inner" onclick="openProductModal('+p.id+')" style="cursor:pointer">' +
-          '<img src="'+(p.img||'')+'" loading="lazy" onerror="this.style.display='none'" alt="'+(lang==='ar'?p.ar:p.en)+'" style="width:100%;height:100%;object-fit:cover;display:block">' +
+          '<img src="'+(p.img||'')+'" loading="lazy" onerror="this.style.display=&apos;none&apos;" alt="'+(lang==='ar'?p.ar:p.en)+'" style="width:100%;height:100%;object-fit:cover;display:block">' +
         '</div>' +
         (p.badge ? '<div class="product-badge">'+p.badge+'</div>' : '') +
         '<div class="product-cat-badge">'+(catLabels[p.cat]||'')+'</div>' +
@@ -3252,7 +3253,7 @@ function renderRatings(productId) {
   var starsHtml = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
   starsHtml += '<div class="rating-stars" id="newReviewStars">';
   for (var i=1; i<=5; i++) {
-    starsHtml += '<span class="rating-star" data-star="'+i+'" onclick="setRating('+i+','newReviewStars')">★</span>';
+    starsHtml += '<span class="rating-star" data-star="'+i+'" onclick="setRating('+i+',\'newReviewStars\')">★</span>';
   }
   starsHtml += '</div>';
   starsHtml += '<span style="font-size:12px;color:var(--taupe)" id="ratingCount">' + (reviews.length ? avgRating + '★ (' + reviews.length + ' تقييم)' : 'لا يوجد تقييم بعد') + '</span>';
