@@ -12,22 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
-  authDomain: "lamsa-store-6b22a.firebaseapp.com",
-  projectId: "lamsa-store-6b22a",
-  storageBucket: "lamsa-store-6b22a.firebasestorage.app",
-  messagingSenderId: "954405056528",
-  appId: "1:954405056528:web:8b988274f315376c4c9a95"
-});
-window._lamsaDB = firebase.firestore();
-firebase.auth().onAuthStateChanged(function(user) {
-  window._currentUser = user;
-  var btn = document.getElementById('themeBtn');
-  // update UI if needed
-});
-</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Tajawal:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1583,7 +1568,236 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 <div class="notification" id="notification"></div>
 
+
+
+<!-- ===== BACK TO TOP ===== -->
+<button id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ===== WHATSAPP FLOAT ===== -->
+<a id="waFloatBtn" href="#" onclick="openWA(event)" title="تحدث معنا">💬</a>
+
+<!-- ===== IMAGE ZOOM ===== -->
+<div id="imgZoom">
+  <button class="zoom-x" onclick="closeZoom()">✕</button>
+  <img id="imgZoomSrc" src="" alt="">
+</div>
+
+<!-- ===== AUTH MODAL ===== -->
+<div id="authModal">
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">دخول</button>
+      <button class="auth-tab" id="authTabReg" onclick="switchAuthTab('register')">حساب جديد</button>
+    </div>
+    <!-- Login -->
+    <div id="authLoginForm">
+      <button class="google-btn" onclick="doGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="G"> الدخول بـ Google
+      </button>
+      <button class="google-btn" style="opacity:0.5;cursor:not-allowed">
+        📱 رقم الجوال <span class="soon-badge">قريباً</span>
+      </button>
+      <div class="auth-divider"><span>أو بالبريد الإلكتروني</span></div>
+      <input class="auth-inp" type="email" id="loginEmail" placeholder="البريد الإلكتروني">
+      <input class="auth-inp" type="password" id="loginPass" placeholder="كلمة المرور">
+      <button class="auth-btn" onclick="doEmailLogin()">دخول</button>
+      <div class="auth-switch">ما عندك حساب؟ <a onclick="switchAuthTab('register')">سجّل الحين</a></div>
+    </div>
+    <!-- Register -->
+    <div id="authRegForm" style="display:none">
+      <button class="google-btn" onclick="doGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="G"> التسجيل بـ Google
+      </button>
+      <div class="auth-divider"><span>أو بالبريد الإلكتروني</span></div>
+      <input class="auth-inp" type="text" id="regName" placeholder="الاسم الكامل">
+      <input class="auth-inp" type="email" id="regEmail" placeholder="البريد الإلكتروني">
+      <input class="auth-inp" type="password" id="regPass" placeholder="كلمة المرور (6 أحرف+)">
+      <button class="auth-btn" onclick="doRegister()">إنشاء حساب</button>
+      <div class="auth-switch">عندك حساب؟ <a onclick="switchAuthTab('login')">سجّل دخول</a></div>
+    </div>
+    <button onclick="closeAuthModal()" style="position:absolute;top:14px;left:14px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--taupe)">✕</button>
+  </div>
+</div>
+
+<!-- ===== OTP MODAL ===== -->
+<div id="otpModal">
+  <div class="otp-box">
+    <h3>تأكيد الجوال</h3>
+    <p id="otpSubText">أدخل كود التحقق</p>
+    <input class="otp-inp" type="number" id="otpInp" placeholder="1234" onkeydown="if(event.key==='Enter')confirmOTP()">
+    <button class="otp-confirm" onclick="confirmOTP()">تأكيد</button>
+    <button class="otp-cancel" onclick="document.getElementById('otpModal').classList.remove('open')">إلغاء</button>
+  </div>
+</div>
+
+<!-- ===== CAT MEN PAGE ===== -->
+<div class="overlay-page" id="catMenPage">
+  <div class="overlay-back" onclick="closeOverlay('catMenPage')">← رجوع</div>
+  <div class="cat-banner cat-banner-men">
+    <div class="cat-banner-content">
+      <h2>رجالي</h2>
+      <p>إكسسوارات راقية للرجل العصري</p>
+    </div>
+  </div>
+  <div class="cat-products-wrap">
+    <div class="products-grid" id="catMenGrid"></div>
+  </div>
+</div>
+
+<!-- ===== CAT WOMEN PAGE ===== -->
+<div class="overlay-page" id="catWomenPage">
+  <div class="overlay-back" onclick="closeOverlay('catWomenPage')">← رجوع</div>
+  <div class="cat-banner cat-banner-women">
+    <div class="cat-banner-content">
+      <h2>نسائي</h2>
+      <p>أناقة لا حدود لها للمرأة الواثقة</p>
+    </div>
+  </div>
+  <div class="cat-products-wrap">
+    <div class="products-grid" id="catWomenGrid"></div>
+  </div>
+</div>
+
+<!-- ===== CAT UNISEX PAGE ===== -->
+<div class="overlay-page" id="catUnisexPage">
+  <div class="overlay-back" onclick="closeOverlay('catUnisexPage')">← رجوع</div>
+  <div class="cat-banner cat-banner-unisex">
+    <div class="cat-banner-content">
+      <h2>للجنسين</h2>
+      <p>تصاميم عصرية تناسب الجميع</p>
+    </div>
+  </div>
+  <div class="cat-products-wrap">
+    <div class="products-grid" id="catUnisexGrid"></div>
+  </div>
+</div>
+
+<!-- ===== TRACK PAGE ===== -->
+<div class="overlay-page" id="trackPage">
+  <div class="overlay-back" onclick="closeOverlay('trackPage')">← رجوع</div>
+  <div class="track-wrap">
+    <h2>📦 تتبع طلبك</h2>
+    <p>أدخل رقم الطلب لمعرفة حالته الحالية</p>
+    <div class="track-row">
+      <input class="track-text-inp" type="text" id="trackInp" placeholder="مثال: #ORD-2025-1234" onkeydown="if(event.key==='Enter')doTrack()">
+      <button class="track-go-btn" onclick="doTrack()">تتبع</button>
+    </div>
+    <div class="track-result" id="trackResult">
+      <div class="track-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="font-family:'Playfair Display',serif" id="trackOrderNum"></h3>
+          <span id="trackStatusBadge" class="badge"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+          <div><span style="color:var(--taupe)">العميل: </span><span id="trackCust"></span></div>
+          <div><span style="color:var(--taupe)">الإجمالي: </span><span id="trackTotal"></span></div>
+        </div>
+      </div>
+      <div id="trackTimeline"></div>
+    </div>
+    <div id="trackNotFound" style="display:none;text-align:center;padding:32px;color:var(--taupe)">
+      <div style="font-size:36px;margin-bottom:10px">🔍</div>
+      <p>لم يتم العثور على الطلب. تأكد من الرقم وحاول مجدداً</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ABOUT PAGE ===== -->
+<div class="overlay-page" id="aboutPage">
+  <div class="overlay-back" onclick="closeOverlay('aboutPage')">← رجوع</div>
+  <div class="about-wrap">
+    <div class="about-hero">
+      <div>
+        <div style="font-size:11px;letter-spacing:4px;color:var(--taupe);margin-bottom:14px">عن لمسة</div>
+        <h2 class="about-big">حين تلتقي <em>الأناقة</em><br>بالتفاصيل الدقيقة</h2>
+        <p style="color:var(--taupe);line-height:1.8;margin-bottom:16px">لمسة ليست مجرد متجر إكسسوارات — هي فلسفة في الأناقة والتميز. نؤمن أن التفاصيل الصغيرة هي التي تصنع الفارق الكبير.</p>
+        <p style="color:var(--taupe);line-height:1.8">منذ تأسيسنا، نسعى لتقديم إكسسوارات فاخرة مختارة بعناية من أجود الخامات العالمية.</p>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--cream),var(--light-taupe));height:300px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:72px">✨</div>
+    </div>
+    <div class="about-stats">
+      <div class="about-stat"><div class="about-stat-n">+500</div><div class="about-stat-l">عميل سعيد</div></div>
+      <div class="about-stat"><div class="about-stat-n">+50</div><div class="about-stat-l">منتج فاخر</div></div>
+      <div class="about-stat"><div class="about-stat-n">3</div><div class="about-stat-l">سنوات خبرة</div></div>
+      <div class="about-stat"><div class="about-stat-n">4.9★</div><div class="about-stat-l">تقييم العملاء</div></div>
+    </div>
+    <div class="about-vals">
+      <div class="about-val"><div class="about-val-ico">💎</div><div class="about-val-ttl">الجودة أولاً</div><div class="about-val-txt">نختار كل منتج بعناية فائقة لضمان أعلى مستويات الجودة</div></div>
+      <div class="about-val"><div class="about-val-ico">🚀</div><div class="about-val-ttl">توصيل سريع</div><div class="about-val-txt">نوصل طلبك في أسرع وقت مع ضمان وصوله سليماً</div></div>
+      <div class="about-val"><div class="about-val-ico">💝</div><div class="about-val-ttl">رضاك يهمنا</div><div class="about-val-txt">خدمة عملاء متميزة وسياسة إرجاع مرنة</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ PAGE ===== -->
+<div class="overlay-page" id="faqPage">
+  <div class="overlay-back" onclick="closeOverlay('faqPage')">← رجوع</div>
+  <div class="faq-wrap">
+    <h2 class="faq-ttl">الأسئلة الشائعة</h2>
+    <p class="faq-sub">كل ما تحتاج معرفته عن التسوق في لمسة</p>
+    <div id="faqList"></div>
+  </div>
+</div>
+
+<!-- ===== GIFT CARD PAGE ===== -->
+<div class="overlay-page" id="giftPage">
+  <div class="overlay-back" onclick="closeOverlay('giftPage')">← رجوع</div>
+  <div class="gc-wrap">
+    <div style="text-align:center;margin-bottom:40px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:32px;margin-bottom:8px">بطاقة هدية لمسة</h2>
+      <p style="color:var(--taupe);font-size:13px">أهدِ من تحب تجربة تسوق لا تُنسى</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+      <div>
+        <div class="gc-card" style="display:flex;flex-direction:column">
+          <div class="gc-logo">لمسة | Lamsa</div>
+          <span class="gc-amount" id="gcAmtDisplay">100 ر.س</span>
+          <div class="gc-code" id="gcCodeDisplay">XXXX-XXXX-XXXX</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button onclick="setGCAmount(100,this)" class="btn active" style="font-size:12px">100 ر.س</button>
+          <button onclick="setGCAmount(200,this)" class="btn" style="font-size:12px">200 ر.س</button>
+          <button onclick="setGCAmount(500,this)" class="btn" style="font-size:12px">500 ر.س</button>
+          <button onclick="setGCAmount(1000,this)" class="btn" style="font-size:12px">1000 ر.س</button>
+        </div>
+      </div>
+      <div>
+        <input class="gc-inp" type="text" id="gcSender" placeholder="اسم المرسِل">
+        <input class="gc-inp" type="text" id="gcReceiver" placeholder="اسم المستلم">
+        <textarea class="gc-area" id="gcMsg" placeholder="رسالة شخصية..."></textarea>
+        <button class="gc-gen-btn" onclick="generateGC()">🎁 إنشاء بطاقة الهدية</button>
+        <div class="gc-result" id="gcResult">
+          <div style="font-size:28px;margin-bottom:10px">🎉</div>
+          <h3 style="font-family:'Playfair Display',serif;margin-bottom:8px">تم إنشاء البطاقة!</h3>
+          <div class="gc-final-code" id="gcFinalCode"></div>
+          <button onclick="copyGCCode()" style="padding:8px 18px;background:var(--charcoal);color:white;border:none;cursor:pointer;border-radius:4px;font-family:'Tajawal',sans-serif">📋 نسخ الكود</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 <script>
+
+firebase.initializeApp({
+  apiKey: "AIzaSyAi-Slo5BunTVKh8Kwfc-20lJ2EVHjqEM0",
+  authDomain: "lamsa-store-6b22a.firebaseapp.com",
+  projectId: "lamsa-store-6b22a",
+  storageBucket: "lamsa-store-6b22a.firebasestorage.app",
+  messagingSenderId: "954405056528",
+  appId: "1:954405056528:web:8b988274f315376c4c9a95"
+});
+window._lamsaDB = firebase.firestore();
+firebase.auth().onAuthStateChanged(function(user) {
+  window._currentUser = user;
+  var btn = document.getElementById('themeBtn');
+  // update UI if needed
+});
+
+
 const products = [
   { id:1,  ar:'ساعة كلاسيك ذهبية',   en:'Gold Classic Watch',      priceAr:'١٤٥٠ ر.س', priceEn:'1450 SAR', priceNum:1450, oldAr:'١٩٠٠ ر.س', oldEn:'1900 SAR', badge:'جديد / New',                 bg:'p1', icon:'⌚', cat:'unisex', img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=85&fit=crop' },
   { id:2,  ar:'محفظة جلد إيطالي',     en:'Italian Leather Wallet',  priceAr:'٣٨٠ ر.س',  priceEn:'380 SAR',  priceNum:380,  oldAr:'',         oldEn:'',         badge:'',                            bg:'p2', icon:'👛', cat:'women',  img:'https://images.unsplash.com/photo-1627123424574-724758594785?w=600&q=85&fit=crop' },
@@ -2279,217 +2493,8 @@ function showNotification(msg) {
     setTimeout(() => n.classList.remove('hide'), 300);
   }, 3000);
 }
-</script>
-
-<!-- ===== BACK TO TOP ===== -->
-<button id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<!-- ===== WHATSAPP FLOAT ===== -->
-<a id="waFloatBtn" href="#" onclick="openWA(event)" title="تحدث معنا">💬</a>
-
-<!-- ===== IMAGE ZOOM ===== -->
-<div id="imgZoom">
-  <button class="zoom-x" onclick="closeZoom()">✕</button>
-  <img id="imgZoomSrc" src="" alt="">
-</div>
-
-<!-- ===== AUTH MODAL ===== -->
-<div id="authModal">
-  <div class="auth-box">
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">دخول</button>
-      <button class="auth-tab" id="authTabReg" onclick="switchAuthTab('register')">حساب جديد</button>
-    </div>
-    <!-- Login -->
-    <div id="authLoginForm">
-      <button class="google-btn" onclick="doGoogleLogin()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="G"> الدخول بـ Google
-      </button>
-      <button class="google-btn" style="opacity:0.5;cursor:not-allowed">
-        📱 رقم الجوال <span class="soon-badge">قريباً</span>
-      </button>
-      <div class="auth-divider"><span>أو بالبريد الإلكتروني</span></div>
-      <input class="auth-inp" type="email" id="loginEmail" placeholder="البريد الإلكتروني">
-      <input class="auth-inp" type="password" id="loginPass" placeholder="كلمة المرور">
-      <button class="auth-btn" onclick="doEmailLogin()">دخول</button>
-      <div class="auth-switch">ما عندك حساب؟ <a onclick="switchAuthTab('register')">سجّل الحين</a></div>
-    </div>
-    <!-- Register -->
-    <div id="authRegForm" style="display:none">
-      <button class="google-btn" onclick="doGoogleLogin()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="G"> التسجيل بـ Google
-      </button>
-      <div class="auth-divider"><span>أو بالبريد الإلكتروني</span></div>
-      <input class="auth-inp" type="text" id="regName" placeholder="الاسم الكامل">
-      <input class="auth-inp" type="email" id="regEmail" placeholder="البريد الإلكتروني">
-      <input class="auth-inp" type="password" id="regPass" placeholder="كلمة المرور (6 أحرف+)">
-      <button class="auth-btn" onclick="doRegister()">إنشاء حساب</button>
-      <div class="auth-switch">عندك حساب؟ <a onclick="switchAuthTab('login')">سجّل دخول</a></div>
-    </div>
-    <button onclick="closeAuthModal()" style="position:absolute;top:14px;left:14px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--taupe)">✕</button>
-  </div>
-</div>
-
-<!-- ===== OTP MODAL ===== -->
-<div id="otpModal">
-  <div class="otp-box">
-    <h3>تأكيد الجوال</h3>
-    <p id="otpSubText">أدخل كود التحقق</p>
-    <input class="otp-inp" type="number" id="otpInp" placeholder="1234" onkeydown="if(event.key==='Enter')confirmOTP()">
-    <button class="otp-confirm" onclick="confirmOTP()">تأكيد</button>
-    <button class="otp-cancel" onclick="document.getElementById('otpModal').classList.remove('open')">إلغاء</button>
-  </div>
-</div>
-
-<!-- ===== CAT MEN PAGE ===== -->
-<div class="overlay-page" id="catMenPage">
-  <div class="overlay-back" onclick="closeOverlay('catMenPage')">← رجوع</div>
-  <div class="cat-banner cat-banner-men">
-    <div class="cat-banner-content">
-      <h2>رجالي</h2>
-      <p>إكسسوارات راقية للرجل العصري</p>
-    </div>
-  </div>
-  <div class="cat-products-wrap">
-    <div class="products-grid" id="catMenGrid"></div>
-  </div>
-</div>
-
-<!-- ===== CAT WOMEN PAGE ===== -->
-<div class="overlay-page" id="catWomenPage">
-  <div class="overlay-back" onclick="closeOverlay('catWomenPage')">← رجوع</div>
-  <div class="cat-banner cat-banner-women">
-    <div class="cat-banner-content">
-      <h2>نسائي</h2>
-      <p>أناقة لا حدود لها للمرأة الواثقة</p>
-    </div>
-  </div>
-  <div class="cat-products-wrap">
-    <div class="products-grid" id="catWomenGrid"></div>
-  </div>
-</div>
-
-<!-- ===== CAT UNISEX PAGE ===== -->
-<div class="overlay-page" id="catUnisexPage">
-  <div class="overlay-back" onclick="closeOverlay('catUnisexPage')">← رجوع</div>
-  <div class="cat-banner cat-banner-unisex">
-    <div class="cat-banner-content">
-      <h2>للجنسين</h2>
-      <p>تصاميم عصرية تناسب الجميع</p>
-    </div>
-  </div>
-  <div class="cat-products-wrap">
-    <div class="products-grid" id="catUnisexGrid"></div>
-  </div>
-</div>
-
-<!-- ===== TRACK PAGE ===== -->
-<div class="overlay-page" id="trackPage">
-  <div class="overlay-back" onclick="closeOverlay('trackPage')">← رجوع</div>
-  <div class="track-wrap">
-    <h2>📦 تتبع طلبك</h2>
-    <p>أدخل رقم الطلب لمعرفة حالته الحالية</p>
-    <div class="track-row">
-      <input class="track-text-inp" type="text" id="trackInp" placeholder="مثال: #ORD-2025-1234" onkeydown="if(event.key==='Enter')doTrack()">
-      <button class="track-go-btn" onclick="doTrack()">تتبع</button>
-    </div>
-    <div class="track-result" id="trackResult">
-      <div class="track-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3 style="font-family:'Playfair Display',serif" id="trackOrderNum"></h3>
-          <span id="trackStatusBadge" class="badge"></span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
-          <div><span style="color:var(--taupe)">العميل: </span><span id="trackCust"></span></div>
-          <div><span style="color:var(--taupe)">الإجمالي: </span><span id="trackTotal"></span></div>
-        </div>
-      </div>
-      <div id="trackTimeline"></div>
-    </div>
-    <div id="trackNotFound" style="display:none;text-align:center;padding:32px;color:var(--taupe)">
-      <div style="font-size:36px;margin-bottom:10px">🔍</div>
-      <p>لم يتم العثور على الطلب. تأكد من الرقم وحاول مجدداً</p>
-    </div>
-  </div>
-</div>
-
-<!-- ===== ABOUT PAGE ===== -->
-<div class="overlay-page" id="aboutPage">
-  <div class="overlay-back" onclick="closeOverlay('aboutPage')">← رجوع</div>
-  <div class="about-wrap">
-    <div class="about-hero">
-      <div>
-        <div style="font-size:11px;letter-spacing:4px;color:var(--taupe);margin-bottom:14px">عن لمسة</div>
-        <h2 class="about-big">حين تلتقي <em>الأناقة</em><br>بالتفاصيل الدقيقة</h2>
-        <p style="color:var(--taupe);line-height:1.8;margin-bottom:16px">لمسة ليست مجرد متجر إكسسوارات — هي فلسفة في الأناقة والتميز. نؤمن أن التفاصيل الصغيرة هي التي تصنع الفارق الكبير.</p>
-        <p style="color:var(--taupe);line-height:1.8">منذ تأسيسنا، نسعى لتقديم إكسسوارات فاخرة مختارة بعناية من أجود الخامات العالمية.</p>
-      </div>
-      <div style="background:linear-gradient(135deg,var(--cream),var(--light-taupe));height:300px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:72px">✨</div>
-    </div>
-    <div class="about-stats">
-      <div class="about-stat"><div class="about-stat-n">+500</div><div class="about-stat-l">عميل سعيد</div></div>
-      <div class="about-stat"><div class="about-stat-n">+50</div><div class="about-stat-l">منتج فاخر</div></div>
-      <div class="about-stat"><div class="about-stat-n">3</div><div class="about-stat-l">سنوات خبرة</div></div>
-      <div class="about-stat"><div class="about-stat-n">4.9★</div><div class="about-stat-l">تقييم العملاء</div></div>
-    </div>
-    <div class="about-vals">
-      <div class="about-val"><div class="about-val-ico">💎</div><div class="about-val-ttl">الجودة أولاً</div><div class="about-val-txt">نختار كل منتج بعناية فائقة لضمان أعلى مستويات الجودة</div></div>
-      <div class="about-val"><div class="about-val-ico">🚀</div><div class="about-val-ttl">توصيل سريع</div><div class="about-val-txt">نوصل طلبك في أسرع وقت مع ضمان وصوله سليماً</div></div>
-      <div class="about-val"><div class="about-val-ico">💝</div><div class="about-val-ttl">رضاك يهمنا</div><div class="about-val-txt">خدمة عملاء متميزة وسياسة إرجاع مرنة</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== FAQ PAGE ===== -->
-<div class="overlay-page" id="faqPage">
-  <div class="overlay-back" onclick="closeOverlay('faqPage')">← رجوع</div>
-  <div class="faq-wrap">
-    <h2 class="faq-ttl">الأسئلة الشائعة</h2>
-    <p class="faq-sub">كل ما تحتاج معرفته عن التسوق في لمسة</p>
-    <div id="faqList"></div>
-  </div>
-</div>
-
-<!-- ===== GIFT CARD PAGE ===== -->
-<div class="overlay-page" id="giftPage">
-  <div class="overlay-back" onclick="closeOverlay('giftPage')">← رجوع</div>
-  <div class="gc-wrap">
-    <div style="text-align:center;margin-bottom:40px">
-      <h2 style="font-family:'Playfair Display',serif;font-size:32px;margin-bottom:8px">بطاقة هدية لمسة</h2>
-      <p style="color:var(--taupe);font-size:13px">أهدِ من تحب تجربة تسوق لا تُنسى</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
-      <div>
-        <div class="gc-card" style="display:flex;flex-direction:column">
-          <div class="gc-logo">لمسة | Lamsa</div>
-          <span class="gc-amount" id="gcAmtDisplay">100 ر.س</span>
-          <div class="gc-code" id="gcCodeDisplay">XXXX-XXXX-XXXX</div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <button onclick="setGCAmount(100,this)" class="btn active" style="font-size:12px">100 ر.س</button>
-          <button onclick="setGCAmount(200,this)" class="btn" style="font-size:12px">200 ر.س</button>
-          <button onclick="setGCAmount(500,this)" class="btn" style="font-size:12px">500 ر.س</button>
-          <button onclick="setGCAmount(1000,this)" class="btn" style="font-size:12px">1000 ر.س</button>
-        </div>
-      </div>
-      <div>
-        <input class="gc-inp" type="text" id="gcSender" placeholder="اسم المرسِل">
-        <input class="gc-inp" type="text" id="gcReceiver" placeholder="اسم المستلم">
-        <textarea class="gc-area" id="gcMsg" placeholder="رسالة شخصية..."></textarea>
-        <button class="gc-gen-btn" onclick="generateGC()">🎁 إنشاء بطاقة الهدية</button>
-        <div class="gc-result" id="gcResult">
-          <div style="font-size:28px;margin-bottom:10px">🎉</div>
-          <h3 style="font-family:'Playfair Display',serif;margin-bottom:8px">تم إنشاء البطاقة!</h3>
-          <div class="gc-final-code" id="gcFinalCode"></div>
-          <button onclick="copyGCCode()" style="padding:8px 18px;background:var(--charcoal);color:white;border:none;cursor:pointer;border-radius:4px;font-family:'Tajawal',sans-serif">📋 نسخ الكود</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
-<script>
 // ============================================================
 // ===== ANNOUNCEMENT BAR =====
 // ============================================================
@@ -2622,10 +2627,9 @@ function renderFilteredProducts() {
   document.getElementById('productsGrid').innerHTML = list.map(function(p) {
     return '<div class="product-card">' +
       '<div class="product-img"><div class="product-img-clip"><div class="product-img-inner" onclick="openProductModal(' + p.id + ')" style="cursor:pointer">' +
-      '<img src="' + (p.img||'') + '" loading="lazy" onerror="this.style.display='none'" alt="' + (lang==='ar'?p.ar:p.en) + '" style="width:100%;height:100%;object-fit:cover;display:block">' +
+      '<img src="' + (p.img||'') + '" loading="lazy" alt="' + (lang==='ar'?p.ar:p.en) + '" style="width:100%;height:100%;object-fit:cover;display:block">' +
       '</div>' + (p.badge ? '<div class="product-badge">' + p.badge + '</div>' : '') +
       '<div class="product-cat-badge">' + (catLabels[p.cat]||'') + '</div>' +
-      '<button onclick="openZoom('' + (p.img||'') + '')" style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.5);border:none;color:white;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:11px;display:' + (p.img?'flex':'none') + ';align-items:center;justify-content:center">🔍</button>' +
       '</div><div class="product-actions">' +
       '<button class="add-to-cart" onclick="addToCart(' + p.id + ')">' + T.addToCart + '</button>' +
       '<button class="wishlist-btn" onclick="toggleWish(this,' + p.id + ')">🤍</button>' +
@@ -2679,7 +2683,7 @@ function renderCatGrid(cat, gridId) {
   grid.innerHTML = list.map(function(p) {
     return '<div class="product-card visible">' +
       '<div class="product-img"><div class="product-img-clip"><div class="product-img-inner" onclick="closeOverlay('' + gridId.replace('Grid','Page') + '');openProductModal(' + p.id + ')" style="cursor:pointer">' +
-      '<img src="' + (p.img||'') + '" loading="lazy" onerror="this.style.display='none'" alt="' + (lang==='ar'?p.ar:p.en) + '" style="width:100%;height:100%;object-fit:cover">' +
+      '<img src="' + (p.img||'') + '" loading="lazy" onerror=\"this.style.display='none'\" alt="' + (lang==='ar'?p.ar:p.en) + '" style="width:100%;height:100%;object-fit:cover">' +
       '</div>' + (p.badge ? '<div class="product-badge">' + p.badge + '</div>' : '') +
       '</div><div class="product-actions"><button class="add-to-cart" onclick="addToCart(' + p.id + ')">' + T.addToCart + '</button><button class="wishlist-btn" onclick="toggleWish(this,' + p.id + ')">🤍</button></div></div>' +
       '<div class="product-info"><h3>' + (lang==='ar'?p.ar:p.en) + '</h3><div class="product-price"><span class="price-new">' + (lang==='ar'?p.priceAr:p.priceEn) + '</span></div></div></div>';
@@ -2949,7 +2953,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-</script>
 
+</script>
 </body>
 </html>
