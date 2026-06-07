@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لمسة سفر - حقيبة السفر الذكية المضغوطة</title>
+    <title>لمسة سفر - أناقة لا حدود لها</title>
     <style>
         :root {
             --primary-color: #1a1a1a;
             --accent-color: #e67e22;
-            --bg-color: #f9f9f9;
+            --bg-color: #ffffff;
+            --text-muted: #777777;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,89 +17,150 @@
             margin: 0;
             padding: 0;
             color: #333;
+            scroll-behavior: smooth;
         }
         .announcement-bar {
             background-color: var(--primary-color);
             color: #fff;
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             font-size: 14px;
+            letter-spacing: 1px;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        
+        /* الهيدر الكلاسيكي القديم */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid #f0f0f0;
         }
         .logo {
-            text-align: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            margin: 20px 0;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* قسم البطل من التصميم القديم */
+        .hero-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .hero-title {
+            font-size: 42px;
+            font-weight: 300;
+            color: var(--primary-color);
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+        }
+        .hero-desc {
+            font-size: 18px;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            line-height: 1.8;
+        }
+        
+        /* أزرار الواجهة القديمة */
+        .cta-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+        .btn {
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .btn-dark {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: 1px solid var(--primary-color);
+        }
+        .btn-dark:hover {
+            background-color: #333;
+        }
+        .btn-light {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        .btn-light:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* عرض منتج الشنطة بأسلوب لمسة */
+        .product-display {
+            max-width: 600px;
+            margin: 0 auto 60px auto;
         }
         .hero-gif {
             width: 100%;
             height: auto;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        .product-title {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .product-desc {
-            font-size: 16px;
-            text-align: center;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
+
+        /* شريط العداد التنازلي البسيط */
         .timer-container {
-            background: #fff5eb;
-            border: 1px dashed var(--accent-color);
-            padding: 15px;
+            background: #fdfdfd;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
             text-align: center;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 60px;
         }
         .timer-title {
             font-size: 14px;
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-bottom: 5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
         }
         #countdown {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: var(--primary-color);
         }
         
-        /* قسم اختيار الأحجام */
-        .size-section {
-            margin-bottom: 25px;
+        /* قسم قائمة الانتظار والمقاسات */
+        .main-form-section {
+            max-width: 550px;
+            margin: 0 auto 80px auto;
+            padding: 0 20px;
         }
         .size-title {
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-align: right;
+            color: var(--primary-color);
         }
         .size-options {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: space-between;
+            margin-bottom: 30px;
         }
         .size-box {
             flex: 1;
-            border: 2px solid #ccc;
-            padding: 12px 5px;
+            border: 1px solid #ddd;
+            padding: 15px 10px;
             text-align: center;
-            border-radius: 6px;
             cursor: pointer;
             transition: 0.3s;
             background: #fff;
@@ -110,71 +172,77 @@
             display: block;
             font-weight: bold;
             font-size: 15px;
-            margin-bottom: 4px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
         }
         .size-box .size-desc {
             display: block;
             font-size: 12px;
-            color: #777;
+            color: var(--text-muted);
         }
         .size-box.selected {
-            border-color: var(--accent-color);
-            background-color: #fffaf5;
-            color: var(--accent-color);
+            border-color: var(--primary-color);
+            background-color: #fafafa;
         }
 
         .waitlist-form {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
+            background: #fafafa;
+            padding: 30px;
+            border: 1px solid #eee;
         }
         .form-title {
             font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-weight: normal;
+            margin-bottom: 20px;
             text-align: center;
+            letter-spacing: 1px;
         }
         .input-group {
             margin-bottom: 15px;
         }
         .input-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 14px;
+            border: 1px solid #ddd;
             box-sizing: border-box;
             font-size: 16px;
             text-align: right;
+            background: #fff;
         }
         .submit-btn {
             width: 100%;
             background-color: var(--primary-color);
             color: white;
-            padding: 14px;
+            padding: 16px;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            letter-spacing: 1px;
         }
         .submit-btn:hover {
             background-color: #333;
         }
+
+        /* الفوتر القديم الأنيق */
         footer {
             text-align: center;
-            padding: 30px 10px;
-            font-size: 12px;
-            color: #999;
+            padding: 40px 20px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .footer-info {
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
     </style>
 
-    <!-- مكتبات Firebase المدمجة والمستوحاة من كودك السابق -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script>
-        // مفاتيح الربط الخاصة بمتجرك لضمان عدم توقف قاعدة البيانات
         const firebaseConfig = {
             apiKey: "AIzaSyAi-S1oS8unTVKh8kwfc-2O1J2EVHjqmEM",
             authDomain: "lamsa-store-6b22a.firebaseapp.com",
@@ -183,63 +251,66 @@
             messagingSenderId: "954405056528",
             appId: "1:954405056528:web:8b988274f315376c4c9a95"
         };
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
     </script>
 </head>
 <body>
 
-    <!-- شريط الإعلان العلوي -->
     <div class="announcement-bar">
-        شحن مجاني للطلبات فوق 300 ر.س ومميزات خاصة لقائمة الانتظار
+        [span_3](start_span)شحن مجاني للطلبات فوق 300 ر.س[span_3](end_span)
     </div>
 
-    <div class="container">
-        <!-- شعار المتجر الجديد -->
-        <div class="logo">لمسة سفر</div>
+    <div class="navbar">
+        <a href="#" class="logo">لمسة سفر</a>
+    </div>
 
-        <!-- مكان الـ GIF أو فيديو الحقيبة المضغوطة -->
-        <img src="https://via.placeholder.com/600x400?text=Insert+Bag+Compression+GIF+Here" alt="حقيبة السفر الذكية" class="hero-gif">
-
-        <div class="product-title">حقيبة السفر الذكية المضغوطة</div>
-        <div class="product-desc">
-            أناقة لا حدود لها تلتقي مع العبقرية الهندسية. سافر بوزن أسبوع كامل في حقيبة ظهر واحدة، ووفر رسوم الأمتعة الزائدة في الطيران الاقتصادي بفضل نظام الكبس السحري.
+    <div class="hero-section">
+        [span_4](start_span)<div class="hero-sub">أناقة لا حدود لها[span_4](end_span)</div>
+        <h1 class="hero-title">حقيبة السفر الذكية المضغوطة</h1>
+        <p class="hero-desc">
+            مفهوم جديد للفخامة والعملية في السفر. [span_5](start_span)الكل له قصة من التعبير[span_5](end_span)، وقصتك تبدأ مع سعة أسبوع كامل مضغوطة في حقيبة ظهر واحدة لتجنب رسوم الوزن الزائد.
+        </p>
+        
+        <div class="cta-container">
+            [span_6](start_span)<a href="#order-section" class="btn btn-dark">تسوق الآن[span_6](end_span)</a>
+            [span_7](start_span)<a href="#order-section" class="btn btn-light">اعرف أكثر[span_7](end_span)</a>
         </div>
 
-        <!-- العداد التنازلي لخلق العجلة والاستعجال -->
-        <div class="timer-container">
-            <div class="timer-title">ينتهي عرض خصم الإطلاق الخاص بقائمة الانتظار خلال:</div>
-            <div id="countdown">02 ساعة : 14 دقيقة : 00 ثانية</div>
+        <div class="product-display">
+            <img src="https://via.placeholder.com/600x400?text=Insert+Bag+Compression+GIF+Here" alt="حقيبة لمسة سفر الذكية" class="hero-gif">
         </div>
+    </div>
 
-        <!-- نموذج قائمة الانتظار واختيار المقاس -->
-        <div class="waitlist-form">
-            <div class="form-title">انضم لقائمة الانتظار واضمن الأولوية فور التوفر</div>
+    <div class="timer-container">
+        <div class="timer-title">ينتهي العرض الخاص بقائمة الانتظار وخصم الإطلاق خلال:</div>
+        <div id="countdown">02 ساعة : 14 دقيقة : 00 ثانية</div>
+    </div>
+
+    <div class="main-form-section" id="order-section">
+        <form id="joinForm">
             
-            <form id="joinForm">
-                <!-- قسم اختيار الأحجام -->
-                <div class="size-section">
-                    <div class="size-title">اختر الحجم المفضل لديك:</div>
-                    <div class="size-options">
-                        <label class="size-box selected">
-                            <input type="radio" name="bag_size" value="قياسي (35L)" checked>
-                            <span class="size-name">قياسي (35L)</span>
-                            <span class="size-desc">لرحلات 3-5 أيام</span>
-                        </label>
-                        <label class="size-box">
-                            <input type="radio" name="bag_size" value="كبير (45L)">
-                            <span class="size-name">كبير (45L)</span>
-                            <span class="size-desc">لرحلات أسبوع كامل</span>
-                        </label>
-                        <label class="size-box">
-                            <input type="radio" name="bag_size" value="برو (55L)">
-                            <span class="size-name">برو (55L)</span>
-                            <span class="size-desc">للسفر الطويل وسعة قصوى</span>
-                        </label>
-                    </div>
-                </div>
+            <div class="size-title">اختر الحجم المفضل:</div>
+            <div class="size-options">
+                <label class="size-box selected">
+                    <input type="radio" name="bag_size" value="قياسي (35L)" checked>
+                    <span class="size-name">قياسي (35L)</span>
+                    <span class="size-desc">لرحلات 3-5 أيام</span>
+                </label>
+                <label class="size-box">
+                    <input type="radio" name="bag_size" value="كبير (45L)">
+                    <span class="size-name">كبير (45L)</span>
+                    <span class="size-desc">لرحلات أسبوع كامل</span>
+                </label>
+                <label class="size-box">
+                    <input type="radio" name="bag_size" value="برو (55L)">
+                    <span class="size-name">برو (55L)</span>
+                    <span class="size-desc">للسفر الطويل</span>
+                </label>
+            </div>
 
+            <div class="waitlist-form">
+                <div class="form-title">انضم لقائمة الانتظار وأعلمني فور التوفر</div>
                 <div class="input-group">
                     <input type="text" id="name" placeholder="الاسم الكريم" required>
                 </div>
@@ -247,17 +318,20 @@
                     <input type="tel" id="phone" placeholder="رقم الجوال (966+)" required>
                 </div>
                 <button type="submit" class="submit-btn" id="submitBtn">أعلمني فور التوفر</button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 
     <footer>
+        <div class="footer-info">
+            [span_8](start_span)<p>البريد الإلكتروني: lamsa@lamsa.sbs[span_8](end_span)</p>
+            [span_9](start_span)<p>السبت - الخميس، 9 ص - 9 m[span_9](end_span)</p>
+        </div>
         <p>جميع الحقوق محفوظة لمتجر لمسة سفر 2026 ©</p>
     </footer>
 
-    <!-- جافا سكريبت لتشغيل العداد والربط الفعلي بقاعدة البيانات -->
     <script>
-        // كود العداد التنازلي المستمر
+        // العداد التنازلي
         function startTimer(duration, display) {
             var timer = duration, hours, minutes, seconds;
             setInterval(function () {
@@ -283,7 +357,7 @@
             startTimer(twoHoursAndFourteenMinutes, display);
         };
 
-        // تفاعل تغيير الحجم مرئياً
+        // تفاعل الأزرار للمقاسات
         const sizeBoxes = document.querySelectorAll('.size-box');
         sizeBoxes.forEach(box => {
             box.addEventListener('click', () => {
@@ -292,7 +366,7 @@
             });
         });
 
-        // إرسال البيانات وحفظها تلقائياً في الـ Firebase Firestore الخاص بك
+        // رفع البيانات للفايربيز
         document.getElementById('joinForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -304,7 +378,6 @@
             submitBtn.innerText = "جاري التسجيل...";
             submitBtn.disabled = true;
 
-            // حفظ في مجموعة (Collection) اسمها waitlist داخل الفايربيز عندك
             db.collection("waitlist").add({
                 name: nameInput,
                 phone: phoneInput,
@@ -319,7 +392,7 @@
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
-                alert('عذراً، حدث خطأ أثناء التسجيل، يرجى المحاولة مرة أخرى.');
+                alert('عذراً، حدث خطأ، يرجى المحاولة مرة أخرى.');
                 submitBtn.innerText = "أعلمني فور التوفر";
                 submitBtn.disabled = false;
             });
