@@ -1,0 +1,285 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>تحدي المليون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F3F0FF; --surface: #FFFFFF; --surface2: #E9E4FF; --ink: #1C1A3D; --ink2: #5B587F; --line: #D9D3F5;
+  --primary: #5B3DF5; --primary-d: #3D25C4; --on-primary: #FFFFFF;
+  --ok: #14A76C; --ok-bg: #CBF3E0; --bad: #E5483C; --bad-bg: #FFD6D0;
+  --a-bg: #FFE4E0; --a-edge: #F26A58; --b-bg: #DDEEFF; --b-edge: #3F8FE8;
+  --c-bg: #D5F5EA; --c-edge: #1BAE88; --d-bg: #FFF1C4; --d-edge: #DDA400;
+  --on-badge: #1C1A3D; --shadow: 0 10px 28px rgba(60, 40, 160, 0.12);
+  --hard: #E8890C; --pro: #D1325F;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14122B; --surface: #1F1C3F; --surface2: #2B2756; --ink: #F1EEFF; --ink2: #AAA6D8; --line: #3A3569;
+    --primary: #8D77FF; --primary-d: #5F47DB; --on-primary: #120F2E;
+    --ok: #35D08D; --ok-bg: #12402F; --bad: #FF7A6B; --bad-bg: #4A2127;
+    --a-bg: #46242C; --a-edge: #FF7A6B; --b-bg: #1D3352; --b-edge: #5AB0FF;
+    --c-bg: #16403A; --c-edge: #2FD8AF; --d-bg: #463A14; --d-edge: #FFD25A;
+    --on-badge: #14122B; --shadow: 0 10px 28px rgba(0, 0, 0, 0.35); --hard: #FFB44D; --pro: #FF6B8E;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(ellipse 70% 45% at 85% -8%, color-mix(in srgb, var(--hot, var(--primary)) 24%, transparent), transparent 70%);
+  background-attachment: fixed;
+  color: var(--ink); font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh;
+}
+button { font-family: inherit; font-size: inherit; color: inherit; }
+#app { max-width: 1100px; margin-inline: auto; padding: 14px 16px 44px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block: 2px 16px; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; font-size: 24px; color: var(--primary); }
+.top-tools { display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 42px; height: 42px; border-radius: 14px; border: 2px solid var(--line); border-bottom-width: 4px; background: var(--surface); cursor: pointer; display: grid; place-items: center; }
+.btn { cursor: pointer; padding: 11px 24px; border-radius: 16px; font-weight: 600; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-bottom-width: 5px; transition: transform 0.08s; }
+.btn.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary-d); font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 700; font-size: 19px; padding: 11px 34px; }
+.btn.quiet { background: transparent; color: var(--ink2); border-bottom-width: 2px; }
+.hero { text-align: center; max-width: 720px; margin-inline: auto; padding: 36px 8px 6px; }
+.hero h1 { font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; font-size: clamp(40px, 10vw, 76px); margin: 0 0 10px; }
+.hero h1 span { color: var(--primary); }
+.hero p.lead { margin: 0 auto 24px; color: var(--ink2); font-size: 18px; }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 760px; margin: 8px auto 0; text-align: right; }
+.mode { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); }
+.mode h3 { margin: 0; font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 22px; font-weight: 700; }
+.mode p { margin: 0; color: var(--ink2); font-size: 15px; flex: 1; }
+.screen { padding-block: 6px; }
+.qcard { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 26px; padding: 30px 26px; min-height: 130px; display: grid; place-items: center; text-align: center; margin-bottom: 14px; box-shadow: var(--shadow); }
+.qcard .qtext { font-size: clamp(20px, 3.3vw, 28px); line-height: 1.55; font-weight: 600; }
+.answers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 16px; }
+.ans { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; cursor: pointer; padding: 10px 14px; min-height: 60px; border-radius: 18px; background: var(--tbg); border: 2px solid var(--tedge); border-bottom-width: 6px; }
+.ans.t0 { --tbg: var(--a-bg); --tedge: var(--a-edge); }
+.ans.t1 { --tbg: var(--b-bg); --tedge: var(--b-edge); }
+.ans.t2 { --tbg: var(--c-bg); --tedge: var(--c-edge); }
+.ans.t3 { --tbg: var(--d-bg); --tedge: var(--d-edge); }
+.ans .badge { width: 36px; height: 36px; border-radius: 50%; background: var(--tedge); color: var(--on-badge); display: grid; place-items: center; font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; font-size: 19px; }
+.ans .txt { font-size: 18px; font-weight: 500; }
+.ans[data-state="correct"] { background: var(--ok-bg); border-color: var(--ok); }
+.ans[data-state="wrong"] { background: var(--bad-bg); border-color: var(--bad); }
+.status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px 14px; text-align: center; }
+.stat small { display: block; color: var(--ink2); font-size: 12px; }
+.stat b { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 19px; font-weight: 700; }
+.stat.now { background: var(--primary); border-color: var(--primary-d); }
+.stat.now small, .stat.now b { color: var(--on-primary); }
+.actions { display: flex; justify-content: center; gap: 12px; }
+.codebox { padding: 9px 14px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); text-align: center; width: 100%; font-weight: 700; font-size: 18px; letter-spacing: 0.2em; }
+.lobbybox { max-width: 520px; margin: 20px auto; text-align: center; background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 24px; box-shadow: var(--shadow); }
+.lobbybox h2 { font-family: 'Baloo Bhaijaan 2', sans-serif; color: var(--primary); font-size: 28px; margin-top: 0; }
+.code { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 48px; font-weight: 800; letter-spacing: 0.1em; color: var(--primary); margin: 10px 0; }
+@media (min-width: 700px) { .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<div id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand"><span>تحدي المليون</span></div>
+    <div class="top-tools">
+      <button class="icon-btn" id="homeBtnTop" type="button" aria-label="الرئيسية">🏠</button>
+    </div>
+  </header>
+
+  <!-- القائمة الرئيسية -->
+  <section class="screen" id="intro">
+    <div class="hero">
+      <h1>تحدي <span>الأسئلة السريع</span></h1>
+      <p class="lead">أسرع من يضغط على الزر يجاوب! (+10 للصح، -7 للخطأ)</p>
+    </div>
+    <div class="modes">
+      <div class="mode">
+        <h3>لعبة فردية عادية</h3>
+        <p>15 سؤالاً نحو المليون مع وسائل المساعدة الكلاسيكية.</p>
+        <button class="btn primary" id="startSoloBtn" type="button">ابدأ اللعب</button>
+      </div>
+      <div class="mode">
+        <h3>مواجهة السبق (أونلاين/غرف)</h3>
+        <p>تحدَ خصماً بعينك عبر رمز الغرفة أو ابحث عن منافس عشوائي الآن.</p>
+        <button class="btn primary" id="createRoomBtn" type="button" style="margin-bottom:8px;">إنشاء غرفة خاصة 🏠</button>
+        <div style="display:flex; gap:8px;">
+          <input class="codebox" id="roomCodeInput" type="text" maxlength="4" placeholder="0000">
+          <button class="btn" id="joinRoomBtn" type="button">انضمام</button>
+        </div>
+        <button class="btn quiet" id="randomMatchBtn" type="button" style="margin-top:8px; width:100%;">بحث عن منافس عشوائي ⚡</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- شاشة اللعب (الفردي أو مواجهة السبق) -->
+  <section class="screen" id="game" hidden>
+    <div class="status">
+      <div class="stat"><small>السؤال</small><b><span id="qnum">1</span> / 10</b></div>
+      <div class="stat now"><small>النمط</small><b><span id="modeNameDisplay">فردي</span></b></div>
+      <div class="stat"><small>النقاط</small><b><span id="scoreText">0</span></b></div>
+    </div>
+    <div class="qcard"><div class="qtext" id="qtext"></div></div>
+    <div class="answers" id="answers"></div>
+    <p id="msg" style="text-align:center; font-weight:bold; min-height:28px;"></p>
+    <div class="actions">
+      <button class="btn quiet" id="quitGameBtn" type="button">إنهاء ومغادرة</button>
+    </div>
+  </section>
+
+  <!-- شاشة انتظار الغرفة -->
+  <section class="screen" id="lobby" hidden>
+    <div class="lobbybox">
+      <h2>غرفة السبق الخاصة</h2>
+      <p>شارك هذا الرمز مع صديقك لتبدأ المواجهة الفورية:</p>
+      <div class="code" id="lobbyCodeDisplay">----</div>
+      <p style="color:var(--ink2); font-size:14px;" id="lobbyStatusText">بانتظار انضمام الخصم...</p>
+      <button class="btn quiet" id="cancelLobbyBtn" type="button" style="margin-top:10px;">إلغاء</button>
+    </div>
+  </section>
+
+  <!-- شاشة النهاية -->
+  <section class="screen" id="end" hidden>
+    <div class="hero">
+      <h2 id="endTitle" style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:36px; color:var(--primary);">نهاية التحدي</h2>
+      <div style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:54px; font-weight:800; margin:10px 0;"><span id="endScore">0</span> <small style="font-size:20px;">نقطة</small></div>
+      <p id="endSubText" style="color:var(--ink2); font-size:18px;"></p>
+      <div class="actions" style="margin-top:20px;">
+        <button class="btn primary" id="backHomeBtn" type="button">الرئيسية</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const QUESTIONS_BANK = [
+  { q: "ما عاصمة المملكة العربية السعودية؟", a: ["الرياض", "جدة", "مكة المكرمة", "الدمام"] },
+  { q: "كم عدد أيام الأسبوع؟", a: ["7", "5", "6", "8"] },
+  { q: "ما أكبر كوكب في المجموعة الشمسية؟", a: ["المشتري", "زحل", "الأرض", "المريخ"] },
+  { q: "كم عدد أركان الإسلام؟", a: ["5", "4", "6", "7"] },
+  { q: "أي حيوان يُعرف بسفينة الصحراء؟", a: ["الجمل", "الحصان", "الفيل", "الحمار"] },
+  { q: "من رسم لوحة الموناليزا؟", a: ["ليوناردو دا فينشي", "بابلو بيكاسو", "فينسنت فان جوخ", "مايكل أنجلو"] },
+  { q: "ما الرمز الكيميائي للذهب؟", a: ["Au", "Ag", "Fe", "Gd"] },
+  { q: "في أي قارة تقع مصر؟", a: ["أفريقيا", "آسيا", "أوروبا", "أمريكا الشمالية"] },
+  { q: "ما العنصر الأكثر وفرة في الغلاف الجوي؟", a: ["النيتروجين", "الأكسجين", "الهيدروجين", "ثاني أكسيد الكربون"] },
+  { q: "من هو أول خلفاء المسلمين الراشدين؟", a: ["أبو بكر الصديق", "عمر بن الخطاب", "عثمان بن عفان", "علي بن أبي طالب"] }
+];
+
+const LETTERS = ['أ', 'ب', 'ج', 'د'];
+let gameState = { mode: 'solo', score: 0, index: 0, qs: [] };
+
+function $(id) { return document.getElementById(id); }
+
+function showScreen(id) {
+  ['intro', 'game', 'lobby', 'end'].forEach(s => $(s).hidden = (s !== id));
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  $('startSoloBtn').onclick = () => startMatch('solo');
+  $('homeBtnTop').onclick = () => showScreen('intro');
+  $('backHomeBtn').onclick = () => showScreen('intro');
+  $('quitGameBtn').onclick = () => showScreen('intro');
+
+  // إنشاء غرفة خاصة عشوائية
+  $('createRoomBtn').onclick = () => {
+    let code = Math.floor(1000 + Math.random() * 9000).toString();
+    $('lobbyCodeDisplay').textContent = code;
+    $('lobbyStatusText').textContent = 'بانتظار انضمام الخصم للغرفة...';
+    showScreen('lobby');
+    // محاكاة دخول الخصم بعد ثانيتين للتجربة السريعة
+    setTimeout(() => {
+      $('lobbyStatusText').textContent = 'تم انضمام الخصم بنجاح! جاري البدء...';
+      setTimeout(() => startMatch('duel'), 1000);
+    }, 2000);
+  };
+
+  // الانضمام عبر الرمز
+  $('joinRoomBtn').onclick = () => {
+    let val = $('roomCodeInput').value.trim();
+    if(val.length !== 4) { alert('الرجاء إدخال رمز غرفة صحيح مكون من 4 أرقام'); return; }
+    startMatch('duel');
+  };
+
+  // بحث عشوائي
+  $('randomMatchBtn').onclick = () => {
+    $('lobbyCodeDisplay').textContent = 'بحث...';
+    $('lobbyStatusText').textContent = 'جاري البحث عن منافس عشوائي عبر الإنترنت...';
+    showScreen('lobby');
+    setTimeout(() => startMatch('duel'), 2000);
+  };
+
+  $('cancelLobbyBtn').onclick = () => showScreen('intro');
+});
+
+function startMatch(mode) {
+  gameState = {
+    mode: mode,
+    score: 0,
+    index: 0,
+    qs: JSON.parse(JSON.stringify(QUESTIONS_BANK)).sort(() => Math.random() - 0.5).slice(0, 10)
+  };
+  $('modeNameDisplay').textContent = mode === 'duel' ? 'مواجهة السبق ⚡' : 'لعبة فردية';
+  showScreen('game');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if(gameState.index >= gameState.qs.length) {
+    endGame();
+    return;
+  }
+  let currentQ = gameState.qs[gameState.index];
+  $('qnum').textContent = gameState.index + 1;
+  $('scoreText').textContent = gameState.score;
+  $('qtext').textContent = currentQ.q;
+  $('msg').textContent = '';
+
+  // خلط الإجابات عشوائياً
+  let opts = currentQ.a.map((txt, i) => ({ t: txt, ok: (i === 0) }));
+  opts.sort(() => Math.random() - 0.5);
+
+  let box = $('answers');
+  box.textContent = '';
+  opts.forEach((opt, idx) => {
+    let btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ans t' + idx;
+    btn.innerHTML = `<span class="badge">${LETTERS[idx]}</span><span class="txt">${opt.t}</span>`;
+    btn.onclick = () => handleAnswer(opt.ok, btn);
+    box.appendChild(btn);
+  });
+}
+
+function handleAnswer(isCorrect, btn) {
+  // تعطيل الأزرار مؤقتاً لمنع التكرار
+  let buttons = $('answers').children;
+  Array.prototype.forEach.call(buttons, b => b.style.pointerEvents = 'none');
+
+  if(isCorrect) {
+    btn.dataset.state = 'correct';
+    gameState.score += 10; // زيادة 10 نقاط
+    $('msg.ok', 'إجابة صحيحة! (+10 نقاط) 🔥');
+    $('msg').textContent = 'إجابة صحيحة! (+10 نقاط) 🔥';
+    $('msg').style.color = 'var(--ok)';
+  } else {
+    btn.dataset.state = 'wrong';
+    gameState.score -= 7; // خصم 7 نقاط
+    $('msg').textContent = 'إجابة خاطئة! (-7 نقاط) وتحول السؤال للخصم ❌';
+    $('msg').style.color = 'var(--bad)';
+  }
+
+  $('scoreText').textContent = gameState.score;
+
+  setTimeout(() => {
+    gameState.index++;
+    loadQuestion();
+  }, 1400);
+}
+
+function endGame() {
+  showScreen('end');
+  $('endScore').textContent = gameState.score;
+  $('endSubText').textContent = gameState.score > 0 ? 'أداء رائع ومنافسة قوية!' : 'حظ أوفر في المرات القادمة!';
+}
+</script>
+</body></html>
