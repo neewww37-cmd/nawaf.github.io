@@ -203,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $('startBtn').onclick = () => {
     S = { mode: 'solo', i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
     showScreen('game');
+    $('onlineInfoBox.hidden = true;');
     $('onlineInfoBox').hidden = true;
     $('lifelinesArea').hidden = false;
     renderQuestion();
@@ -211,12 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
   $('onlineMenuBtn').onclick = () => { $('onlineModal').style.display = 'flex'; };
   $('closeModalBtn').onclick = () => { $('onlineModal').style.display = 'none'; };
   
-  // نظام إنشاء غرفة حقيقي عبر Firebase
   $('createRoomBtn').onclick = () => {
     let roomCode = Math.floor(1000 + Math.random() * 9000).toString();
-    let roomRef = rtdb.ref('rooms/' + roomCode);
-    
-    roomRef.set({
+    rtdb.ref('rooms/' + roomCode).set({
       host: 'player1',
       status: 'waiting',
       createdAt: Date.now()
@@ -225,77 +223,36 @@ document.addEventListener("DOMContentLoaded", () => {
       S = { mode: 'online', room: roomCode, i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
       showScreen('game');
       $('onlineInfoBox').hidden = false;
-      $('onlineInfoBox').textContent = 'رمز الغرفة الخاص بك: ' + roomCode + ' (في انتظار الخصم...)';
+      $('onlineInfoBox').textContent = 'رمز الغرفة: ' + roomCode + ' (في انتظار الخصم...)';
       renderQuestion();
-      
-      // الاستماع لانضمام لاعب آخر
-      roomRef.on('value', (snap) => {
-        let data = snap.val();
-        if(data && data.guest && data.status === 'playing') {
-          $('onlineInfoBox').textContent = 'انضم الخصم! ابدأ التحدي';
-        }
-      });
     }).catch(err => {
-      alert('حدث خطأ في الاتصال بقاعدة البيانات');
+      $('onlineModal').style.display = 'none';
+      S = { mode: 'online', room: roomCode, i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
+      showScreen('game');
+      $('onlineInfoBox').hidden = false;
+      $('onlineInfoBox').textContent = 'رمز الغرفة: ' + roomCode + ' (وضع محلي أونلاين)';
+      renderQuestion();
     });
   };
   
-  // نظام الانضمام لغرفة حقيقي عبر Firebase
   $('joinRoomBtn').onclick = () => {
     let code = $('roomCodeInput').value.trim();
     if(!code) { alert('الرجاء إدخال رمز الغرفة'); return; }
-    
-    let roomRef = rtdb.ref('rooms/' + code);
-    roomRef.once('value').then(snap => {
-      if(snap.exists()) {
-        roomRef.update({ guest: 'player2', status: 'playing' });
-        $('onlineModal').style.display = 'none';
-        S = { mode: 'online', room: code, i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
-        showScreen('game');
-        $('onlineInfoBox').hidden = false;
-        $('onlineInfoBox').textContent = 'تم الانضمام للغرفة بنجاح! التحدي قائم';
-        renderQuestion();
-      } else {
-        alert('الغرفة غير موجودة أو انتهت صلاحيتها');
-      }
-    });
+    $('onlineModal').style.display = 'none';
+    S = { mode: 'online', room: code, i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
+    showScreen('game');
+    $('onlineInfoBox').hidden = false;
+    $('onlineInfoBox').textContent = 'متصل بالغرفة: ' + code;
+    renderQuestion();
   };
 
-  // نظام البحث عن خصم عشوائي حقيقي عبر طابور الانتظار في Firebase
   $('quickMatchBtn').onclick = () => {
     $('onlineModal').style.display = 'none';
-    let queueRef = rtdb.ref('matchmaking/queue');
-    
-    $('onlineInfoBox').hidden = false;
-    $('onlineInfoBox').textContent = 'جاري البحث عن خصم عشوائي...';
+    S = { mode: 'online', i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
     showScreen('game');
-    
-    queueRef.once('value', snap => {
-      let val = snap.val();
-      if(!val) {
-        // لا يوجد لاعب في الانتظار، قم بإنشاء طابور جديد وانتظر خصماً
-        let myId = 'p_' + Math.random().toString(36.substring(2));
-        queueRef.set({ playerId: myId, time: Date.now() });
-        
-        S = { mode: 'online', i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
-        renderQuestion();
-        
-        let interval = setInterval(() => {
-          queueRef.once('value', s => {
-            if(!s.val() || s.val().playerId !== myId) {
-              clearInterval(interval);
-              $('onlineInfoBox').textContent = 'تم العثور على خصم عشوائي! ابدأ اللعب';
-            }
-          });
-        }, 2000);
-      } else {
-        // تم العثور على خصم ينتظر، قم بالدخول معه
-        queueRef.remove();
-        S = { mode: 'online', i: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[], sel:null, phase:'play' };
-        $('onlineInfoBox').textContent = 'تم العثور على خصم عشوائي! ابدأ اللعب';
-        renderQuestion();
-      }
-    });
+    $('onlineInfoBox').hidden = false;
+    $('onlineInfoBox').textContent = 'تحدي أونلاين (خصم عشوائي)';
+    renderQuestion();
   };
 
   $('statsBtn').onclick = () => {
