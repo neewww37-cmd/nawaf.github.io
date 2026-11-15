@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>تحدي المليون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+:root {
+  --bg: #14122B; --surface: #1F1C3F; --surface2: #2B2756; --ink: #F1EEFF; --ink2: #AAA6D8; --line: #3A3569;
+  --primary: #8D77FF; --primary-d: #5F47DB; --on-primary: #120F2E;
+  --ok: #35D08D; --ok-bg: #12402F; --bad: #FF7A6B; --bad-bg: #4A2127;
+  --a-bg: #46242C; --a-edge: #FF7A6B; --b-bg: #1D3352; --b-edge: #5AB0FF;
+  --c-bg: #16403A; --c-edge: #2FD8AF; --d-bg: #463A14; --d-edge: #FFD25A;
+  --on-badge: #14122B; --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: 'IBM Plex Sans Arabic', sans-serif; margin: 0; padding: 16px; min-height: 100vh; }
+#app { max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.brand { font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; font-size: 24px; color: var(--primary); }
+.btn { cursor: pointer; padding: 12px 24px; border-radius: 16px; font-weight: 600; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-bottom-width: 5px; font-family: 'IBM Plex Sans Arabic', sans-serif; transition: 0.05s; }
+.btn:active { transform: translateY(2px); border-bottom-width: 3px; }
+.btn.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary-d); font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 18px; }
+.hero { text-align: center; padding: 20px 0; }
+.hero h1 { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 38px; margin: 0 0 10px; }
+.hero h1 span { color: var(--primary); }
+.modes { display: grid; gap: 15px; margin-top: 20px; }
+.mode { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 20px; padding: 20px; text-align: right; box-shadow: var(--shadow); }
+.mode h3 { font-family: 'Baloo Bhaijaan 2', sans-serif; margin: 0 0 8px; font-size: 20px; color: var(--primary); }
+.mode p { color: var(--ink2); margin: 0 0 15px; }
+.status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; text-align: center; }
+.stat { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 8px; }
+.stat small { display: block; color: var(--ink2); font-size: 11px; }
+.stat b { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 16px; }
+.stat.now { background: var(--primary); color: var(--on-primary); border-color: var(--primary-d); }
+.qcard { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 20px; padding: 24px; text-align: center; font-size: 20px; font-weight: 600; margin-bottom: 15px; box-shadow: var(--shadow); }
+.answers { display: grid; gap: 10px; margin-bottom: 15px; }
+.ans { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; cursor: pointer; padding: 14px 16px; border-radius: 16px; background: var(--tbg); border: 2px solid var(--tedge); border-bottom-width: 5px; font-size: 18px; font-weight: 600; }
+.ans.t0 { --tbg: var(--a-bg); --tedge: var(--a-edge); }
+.ans.t1 { --tbg: var(--b-bg); --tedge: var(--b-edge); }
+.ans.t2 { --tbg: var(--c-bg); --tedge: var(--c-edge); }
+.ans.t3 { --tbg: var(--d-bg); --tedge: var(--d-edge); }
+.ans .badge { width: 32px; height: 32px; border-radius: 50%; background: var(--tedge); color: var(--on-badge); display: grid; place-items: center; font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; }
+.ans[data-state="correct"] { background: var(--ok-bg); border-color: var(--ok); }
+.ans[data-state="wrong"] { background: var(--bad-bg); border-color: var(--bad); }
+.lifelines { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+.life { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; font-family: 'Baloo Bhaijaan 2', sans-serif; color: var(--primary); font-weight: 700; font-size: 15px; }
+.life.used { opacity: 0.4; pointer-events: none; }
+.actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+.screen { display: none; }
+.screen.active { display: block; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">تحدي المليون</div>
+    <button class="btn" id="statsBtn" type="button">إحصائياتي</button>
+  </header>
+
+  <section class="screen active" id="intro">
+    <div class="hero">
+      <h1>اختر نمط <span>اللعب</span></h1>
+      <p>العب بشكل فردي أو تحدَ أصدقائك في مواجهة أونلاين حية!</p>
+    </div>
+    <div class="modes">
+      <div class="mode">
+        <h3>اللعبة الفردية</h3>
+        <p>15 سؤالاً متدرجاً نحو المليون مع وسائل المساعدة.</p>
+        <button class="btn primary" id="startSoloBtn" type="button" style="width:100%;">بدء اللعبة الفردية</button>
+      </div>
+      <div class="mode">
+        <h3>تحدي الأونلاين (1 ضد 1)</h3>
+        <p>أنشئ غرفة بررمز سري خاص وادعُ صديقك للتنافس الفوري.</p>
+        <button class="btn primary" id="createRoomBtn" type="button" style="width:100%; margin-bottom:10px;">إنشاء غرفة خاصة 🏠</button>
+        <input type="text" id="roomCodeInput" maxlength="4" placeholder="أدخل رمز الغرفة..." style="width:100%; padding:12px; border-radius:12px; border:2px solid var(--line); background:var(--bg); color:var(--ink); font-size:18px; text-align:center; letter-spacing:3px; margin-bottom:8px; font-weight:bold;">
+        <button class="btn" id="joinRoomBtn" type="button" style="width:100%;">الانضمام لغرفة 🚪</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="game">
+    <div class="status">
+      <div class="stat"><small>السؤال</small><b><span id="qnum">1</span>/5</b></div>
+      <div class="stat now"><small>الوضع</small><b><span id="modeStatusText">فردي</span></b></div>
+      <div class="stat"><small>النقاط</small><b><span id="scoreText">0</span></b></div>
+    </div>
+    <div id="onlineInfoBox" style="text-align:center; font-weight:bold; color:var(--primary); margin-bottom:10px;" hidden></div>
+    <div class="qcard"><div id="qtext">النص هنا</div></div>
+    
+    <div class="lifelines" id="lifelinesArea">
+      <button class="life" id="lifeFifty" type="button">50:50</button>
+      <button class="life" id="lifeFriend" type="button">📞 اتصال</button>
+      <button class="life" id="lifeCrowd" type="button">👥 الجمهور</button>
+      <button class="life" id="lifeSwap" type="button">🔄 تبديل</button>
+    </div>
+
+    <div class="answers" id="answers"></div>
+    <p id="msg" style="text-align:center; font-weight:bold; min-height:24px;"></p>
+  </section>
+
+  <section class="screen" id="end" style="text-align:center; padding-top:40px;">
+    <h2 id="endTitle" style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:32px; color:var(--primary);">انتهت الجولة</h2>
+    <div style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:36px; font-weight:800; margin:15px 0;" id="endAmt">0</div>
+    <button class="btn primary" id="homeBtn" type="button">الرئيسية</button>
+  </section>
+
+  <section class="screen" id="stats" style="text-align:center; padding-top:40px;">
+    <h2 style="font-family:'Baloo Bhaijaan 2',sans-serif; color:var(--primary);">إحصائياتي</h2>
+    <p style="font-size:18px; color:var(--ink2); margin:20px 0;">ألعاب لعبتها: <b id="statPlayed">0</b> | انتصارات: <b id="statWins">0</b></p>
+    <button class="btn primary" id="statsBack" type="button">رجوع</button>
+  </section>
+</div>
+
+<script>
+const QUESTIONS = [
+  { q: "ما عاصمة المملكة العربية السعودية؟", a: ["الرياض", "جدة", "مكة المكرمة", "الدمام"] },
+  { q: "كم عدد أيام الأسبوع؟", a: ["7", "5", "6", "8"] },
+  { q: "ما أكبر كوكب في المجموعة الشمسية؟", a: ["المشتري", "زحل", "الأرض", "المريخ"] },
+  { q: "كم عدد أركان الإسلام؟", a: ["5", "4", "6", "7"] },
+  { q: "أي حيوان يُعرف بسفينة الصحراء؟", a: ["الجمل", "الحصان", "الفيل", "الحمار"] }
+];
+
+const LETTERS = ['أ', 'ب', 'ج', 'د'];
+let S = null;
+
+function $(id) { return document.getElementById(id); }
+
+function showScreen(name) {
+  ['intro', 'game', 'end', 'stats'].forEach(n => {
+    let el = $(n);
+    if (n === name) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+function getStats() {
+  return JSON.parse(localStorage.getItem('tm_stats') || '{"played":0, "wins":0}');
+}
+function saveStats(won) {
+  let s = getStats();
+  s.played++;
+  if(won) s.wins++;
+  localStorage.setItem('tm_stats', JSON.stringify(s));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // اللعبة الفردية
+  $('startSoloBtn').onclick = () => {
+    S = { mode: 'solo', i: 0, score: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[] };
+    showScreen('game');
+    $('modeStatusText').textContent = 'فردي';
+    $('onlineInfoBox').hidden = true;
+    $('lifelinesArea').hidden = false;
+    renderQuestion();
+  };
+
+  // إنشاء غرفة أونلاين بررمز 4 أرقام
+  $('createRoomBtn').onclick = () => {
+    let roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+    S = { mode: 'online', room: roomCode, i: 0, score: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[] };
+    showScreen('game');
+    $('modeStatusText').textContent = 'أونلاين';
+    $('onlineInfoBox').hidden = false;
+    $('onlineInfoBox').textContent = 'رمز الغرفة الخاص بك: ' + roomCode + ' (شارك الرمز مع صديقك)';
+    $('lifelinesArea').hidden = false;
+    renderQuestion();
+  };
+
+  // الانضمام لغرفة بررمز
+  $('joinRoomBtn').onclick = () => {
+    let code = $('roomCodeInput').value.trim();
+    if(code.length !== 4) { alert('الرجاء إدخال رمز غرفة صحيح مكون من 4 أرقام'); return; }
+    
+    S = { mode: 'online', room: code, i: 0, score: 0, used:{fifty:false, friend:false, crowd:false, swap:false}, removed:[] };
+    showScreen('game');
+    $('modeStatusText').textContent = 'أونلاين';
+    $('onlineInfoBox').hidden = false;
+    $('onlineInfoBox').textContent = 'متصل بالغرفة رقم: ' + code;
+    $('lifelinesArea').hidden = false;
+    renderQuestion();
+  };
+
+  $('statsBtn').onclick = () => {
+    let s = getStats();
+    $('statPlayed').textContent = s.played;
+    $('statWins').textContent = s.wins;
+    showScreen('stats');
+  };
+  
+  $('statsBack').onclick = () => showScreen('intro');
+  $('homeBtn').onclick = () => showScreen('intro');
+
+  $('lifeFifty').onclick = () => {
+    if(S.used.fifty) return;
+    S.used.fifty = true;
+    $('lifeFifty').classList.add('used');
+    let wrong = S.currentOpts.map((o, idx) => o.ok ? -1 : idx).filter(i => i !== -1);
+    wrong.sort(() => Math.random() - 0.5).slice(0, 2).forEach(idx => {
+      S.removed.push(idx);
+      let b = $('answers').children[idx];
+      b.style.opacity = '0.3';
+      b.style.pointerEvents = 'none';
+    });
+  };
+});
+
+function renderQuestion() {
+  if (S.i >= QUESTIONS.length) {
+    endGame(true);
+    return;
+  }
+  let curQ = QUESTIONS[S.i];
+  S.currentOpts = curQ.a.map((t, idx) => ({ t: t, ok: idx === 0 }));
+  S.currentOpts.sort(() => Math.random() - 0.5);
+  S.removed = [];
+
+  $('qnum').textContent = S.i + 1;
+  $('scoreText').textContent = S.score;
+  $('qtext').textContent = curQ.q;
+
+  let box = $('answers'); box.innerHTML = '';
+  S.currentOpts.forEach((o, i) => {
+    let b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ans t' + i;
+    b.innerHTML = `<span class="badge">${LETTERS[i]}</span><span>${o.t}</span>`;
+    b.onclick = () => selectAnswer(i);
+    box.appendChild(b);
+  });
+  $('msg').textContent = '';
+}
+
+function selectAnswer(i) {
+  if (S.removed.includes(i)) return;
+  let ansButtons = $('answers').children;
+  let rightIdx = S.currentOpts.findIndex(o => o.ok);
+
+  Array.from(ansButtons).forEach(b => b.style.pointerEvents = 'none');
+
+  if (i === rightIdx) {
+    ansButtons[i].dataset.state = 'correct';
+    S.score += 100;
+    $('msg').textContent = 'إجابة صحيحة!';
+    setTimeout(() => {
+      S.i++;
+      renderQuestion();
+    }, 1000);
+  } else {
+    ansButtons[i].dataset.state = 'wrong';
+    ansButtons[rightIdx].dataset.state = 'correct';
+    $('msg').textContent = 'إجابة خاطئة!';
+    setTimeout(() => {
+      endGame(false);
+    }, 1500);
+  }
+}
+
+function endGame(won) {
+  saveStats(won);
+  showScreen('end');
+  $('endTitle').textContent = won ? 'مبروك، فزت بالتحدي!' : 'انتهت الجولة';
+  $('endAmt').textContent = 'مجموع النقاط: ' + S.score;
+}
+</script>
+</body>
+</html>
