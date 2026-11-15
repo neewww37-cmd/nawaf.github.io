@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>تحدي المليون - أونلاين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+:root {
+  --bg: #F3F0FF; --surface: #FFFFFF; --surface2: #E9E4FF; --ink: #1C1A3D; --ink2: #5B587F; --line: #D9D3F5;
+  --primary: #5B3DF5; --primary-d: #3D25C4; --on-primary: #FFFFFF;
+  --ok: #14A76C; --ok-bg: #CBF3E0; --bad: #E5483C; --bad-bg: #FFD6D0;
+  --a-bg: #FFE4E0; --a-edge: #F26A58; --b-bg: #DDEEFF; --b-edge: #3F8FE8;
+  --c-bg: #D5F5EA; --c-edge: #1BAE88; --d-bg: #FFF1C4; --d-edge: #DDA400;
+  --on-badge: #1C1A3D; --shadow: 0 10px 28px rgba(60, 40, 160, 0.12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14122B; --surface: #1F1C3F; --surface2: #2B2756; --ink: #F1EEFF; --ink2: #AAA6D8; --line: #3A3569;
+    --primary: #8D77FF; --primary-d: #5F47DB; --on-primary: #120F2E;
+    --ok: #35D08D; --ok-bg: #12402F; --bad: #FF7A6B; --bad-bg: #4A2127;
+    --a-bg: #46242C; --a-edge: #FF7A6B; --b-bg: #1D3352; --b-edge: #5AB0FF;
+    --c-bg: #16403A; --c-edge: #2FD8AF; --d-bg: #463A14; --d-edge: #FFD25A;
+    --on-badge: #14122B; --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: 'IBM Plex Sans Arabic', sans-serif; margin: 0; padding: 16px; min-height: 100vh; }
+#app { max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.brand { font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; font-size: 24px; color: var(--primary); }
+.btn { cursor: pointer; padding: 12px 24px; border-radius: 16px; font-weight: 600; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-bottom-width: 5px; font-family: 'IBM Plex Sans Arabic', sans-serif; transition: 0.05s; }
+.btn:active { transform: translateY(2px); border-bottom-width: 3px; }
+.btn.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary-d); font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 18px; }
+.hero { text-align: center; padding: 20px 0; }
+.hero h1 { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 42px; margin: 0 0 10px; }
+.hero h1 span { color: var(--primary); }
+.modes { display: grid; gap: 15px; margin-top: 20px; }
+.mode { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 20px; padding: 20px; text-align: right; box-shadow: var(--shadow); }
+.mode h3 { font-family: 'Baloo Bhaijaan 2', sans-serif; margin: 0 0 8px; font-size: 20px; }
+.mode p { color: var(--ink2); margin: 0 0 15px; }
+.status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; text-align: center; }
+.stat { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 8px; }
+.stat small { display: block; color: var(--ink2); font-size: 11px; }
+.stat b { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 16px; }
+.stat.now { background: var(--primary); color: var(--on-primary); border-color: var(--primary-d); }
+.qcard { background: var(--surface); border: 2px solid var(--line); border-bottom-width: 6px; border-radius: 20px; padding: 24px; text-align: center; font-size: 20px; font-weight: 600; margin-bottom: 15px; box-shadow: var(--shadow); }
+.answers { display: grid; gap: 10px; margin-bottom: 15px; }
+.ans { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; cursor: pointer; padding: 14px 16px; border-radius: 16px; background: var(--tbg); border: 2px solid var(--tedge); border-bottom-width: 5px; font-size: 18px; font-weight: 600; }
+.ans.t0 { --tbg: var(--a-bg); --tedge: var(--a-edge); }
+.ans.t1 { --tbg: var(--b-bg); --tedge: var(--b-edge); }
+.ans.t2 { --tbg: var(--c-bg); --tedge: var(--c-edge); }
+.ans.t3 { --tbg: var(--d-bg); --tedge: var(--d-edge); }
+.ans .badge { width: 32px; height: 32px; border-radius: 50%; background: var(--tedge); color: var(--on-badge); display: grid; place-items: center; font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; }
+.ans[data-state="selected"] { border-color: var(--primary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 30%, transparent); }
+.ans[data-state="correct"] { background: var(--ok-bg); border-color: var(--ok); }
+.ans[data-state="wrong"] { background: var(--bad-bg); border-color: var(--bad); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 9999; }
+.modal { background: var(--surface); border: 2px solid var(--line); border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow); }
+.modal input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); font-size: 18px; margin: 12px 0; text-align: center; letter-spacing: 2px; font-weight: bold; }
+.screen { display: none; }
+.screen.active { display: block; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">تحدي المليون</div>
+  </header>
+
+  <section class="screen active" id="intro">
+    <div class="hero">
+      <h1>تحدي الأونلاين <span>1 ضد 1</span></h1>
+      <p>أنشئ غرفة برمز مميز وشاركها مع صديقك، أو ابحث عن منافس!</p>
+    </div>
+    <div class="modes">
+      <div class="mode">
+        <h3>إنشاء غرفة خاصة</h3>
+        <p>احصل على رمز غرفة (مثل لودو) وادعُ صديقك.</p>
+        <button class="btn primary" id="createRoomBtn" type="button" style="width:100%;">إنشاء غرفة 🏠</button>
+      </div>
+      <div class="mode">
+        <h3>الانضمام لغرفة</h3>
+        <p>أدخل رمز الغرفة المكون من 4 أرقام للبدء.</p>
+        <input type="text" id="roomCodeInput" maxlength="4" placeholder="أدخل الرمز..." style="width:100%; padding:10px; border-radius:12px; border:2px solid var(--line); text-align:center; font-size:18px; margin-bottom:10px; background:var(--bg); color:var(--ink);">
+        <button class="btn primary" id="joinRoomBtn" type="button" style="width:100%;">دخول الغرفة 🚪</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="game">
+    <div class="status">
+      <div class="stat"><small>السؤال</small><b><span id="qnum">1</span>/5</b></div>
+      <div class="stat now"><small>الحالة</small><b><span id="roomStatusText">متصل</span></b></div>
+      <div class="stat"><small>النقاط</small><b><span id="scoreText">0</span></b></div>
+    </div>
+    <div id="onlineInfoBox" style="text-align:center; font-weight:bold; color:var(--primary); margin-bottom:10px;"></div>
+    <div class="qcard"><div id="qtext">جاري تحميل السؤال...</div></div>
+    
+    <div class="answers" id="answers"></div>
+    <p id="msg" style="text-align:center; font-weight:bold; min-height:24px;"></p>
+  </section>
+
+  <section class="screen" id="end" style="text-align:center; padding-top:40px;">
+    <h2 id="endTitle" style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:32px; color:var(--primary);">نهاية التحدي</h2>
+    <div style="font-family:'Baloo Bhaijaan 2',sans-serif; font-size:32px; font-weight:800; margin:15px 0;" id="endResultText">نتيجتك: 0</div>
+    <button class="btn primary" id="homeBtn" type="button">الرئيسية</button>
+  </section>
+</div>
+
+<script>
+const dbConfig = { databaseURL: "https://tahaddi-million-default-rtdb.firebaseio.com/" };
+if (!firebase.apps.length) firebase.initializeApp(dbConfig);
+const rtdb = firebase.database();
+
+const QUESTIONS = [
+  { q: "ما عاصمة المملكة العربية السعودية؟", a: ["الرياض", "جدة", "مكة المكرمة", "الدمام"] },
+  { q: "كم عدد أيام الأسبوع؟", a: ["7", "5", "6", "8"] },
+  { q: "ما أكبر كوكب في المجموعة الشمسية؟", a: ["المشتري", "زحل", "الأرض", "المريخ"] },
+  { q: "كم عدد أركان الإسلام؟", a: ["5", "4", "6", "7"] },
+  { q: "أي حيوان يُعرف بسفينة الصحراء؟", a: ["الجمل", "الحصان", "الفيل", "الحمار"] }
+];
+
+const LETTERS = ['أ', 'ب', 'ج', 'د'];
+let currentRoom = null;
+let myRole = null; // 'host' or 'guest'
+let score = 0;
+
+function $(id) { return document.getElementById(id); }
+
+function showScreen(name) {
+  ['intro', 'game', 'end'].forEach(n => {
+    let el = $(n);
+    if (n === name) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // إنشاء غرفة برمز مميز 4 أرقام
+  $('createRoomBtn').onclick = () => {
+    let roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+    currentRoom = roomCode;
+    myRole = 'host';
+    score = 0;
+
+    rtdb.ref('rooms/' + roomCode).set({
+      status: 'waiting',
+      qIndex: 0,
+      hostScore: 0,
+      guestScore: 0,
+      answeredBy: ''
+    }).then(() => {
+      showScreen('game');
+      $('onlineInfoBox').textContent = 'رمز الغرفة: ' + roomCode + ' (شارك الرمز مع صديقك)';
+      listenToRoom();
+    });
+  };
+
+  // الانضمام لغرفة برمز
+  $('joinRoomBtn').onclick = () => {
+    let code = $('roomCodeInput').value.trim();
+    if(code.length !== 4) { alert('الرجاء إدخال رمز غرفة صحيح مكون من 4 أرقام'); return; }
+    
+    rtdb.ref('rooms/' + code).once('value').then(snap => {
+      if(snap.exists()) {
+        currentRoom = code;
+        myRole = 'guest';
+        score = 0;
+        rtdb.ref('rooms/' + code).update({ status: 'playing' });
+        showScreen('game');
+        $('onlineInfoBox').textContent = 'تم الانضمام بنجاح للغرفة: ' + code;
+        listenToRoom();
+      } else {
+        alert('الغرفة غير موجودة تأكد من الرمز');
+      }
+    });
+  };
+
+  $('homeBtn').onclick = () => showScreen('intro');
+});
+
+function listenToRoom() {
+  rtdb.ref('rooms/' + currentRoom).on('value', snap => {
+    let data = snap.val();
+    if(!data) return;
+
+    $('scoreText').textContent = myRole === 'host' ? data.hostScore : data.guestScore;
+    $('qnum').textContent = (data.qIndex || 0) + 1;
+
+    if(data.status === 'waiting') {
+      $('roomStatusText').textContent = 'بانتظار الخصم...';
+      $('qtext').textContent = 'بانتظار انضمام اللاعب الثاني لتبدأ المعركة الفورية!';
+      $('answers').innerHTML = '';
+      return;
+    }
+
+    $('roomStatusText').textContent = 'التحدي قائم 🔥';
+    loadQuestionUI(data.qIndex);
+
+    // إذا أجاب أحد اللاعبين
+    if(data.answeredBy) {
+      if(data.answeredBy === myRole) {
+        $('msg').textContent = 'أنت سبقت وأجبت أولاً! (+ نقطة)';
+      } else {
+        $('msg').textContent = 'سبقك الخصم وأاب أولاً!';
+      }
+      
+      // الانتقال للسؤال التالي بعد ثانيتين تلقائياً من قبل المضيف
+      if(myRole === 'host' && data.qIndex < QUESTIONS.length - 1) {
+        setTimeout(() => {
+          rtdb.ref('rooms/' + currentRoom).update({
+            qIndex: data.qIndex + 1,
+            answeredBy: ''
+          });
+        }, 2000);
+      } else if(myRole === 'host' && data.qIndex >= QUESTIONS.length - 1) {
+        setTimeout(() => { endGame(data); }, 2000);
+      }
+    }
+  });
+}
+
+function loadQuestionUI(qIdx) {
+  if(qIdx >= QUESTIONS.length) return;
+  let qData = QUESTIONS[qIdx];
+  $('qtext').textContent = qData.q;
+  
+  let box = $('answers'); 
+  box.innerHTML = '';
+  
+  // خيارات ثابتة لكل الطرفين لتسهيل السبق
+  qData.a.forEach((ansText, idx) => {
+    let b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ans t' + idx;
+    b.innerHTML = `<span class="badge">${LETTERS[idx]}</span><span>${ansText}</span>`;
+    
+    b.onclick = () => {
+      // منع الضغط المتكرر إذا سبق وضغط أحد
+      rtdb.ref('rooms/' + currentRoom).once('value', s => {
+        let val = s.val();
+        if(val.answeredBy) return; // تم الإجابة مسبقاً من أحدهم
+
+        let isCorrect = (idx === 0); // الخيار الأول دائماً هو الإجابة الصحيحة في القائمة مرتبة
+        if(isCorrect) {
+          let currentScore = myRole === 'host' ? val.hostScore : val.guestScore;
+          let updateObj = { answeredBy: myRole };
+          if(myRole === 'host') updateObj.hostScore = currentScore + 1;
+          else updateObj.guestScore = currentScore + 1;
+          
+          rtdb.ref('rooms/' + currentRoom).update(updateObj);
+          b.dataset.state = 'correct';
+        } else {
+          b.dataset.state = 'wrong';
+          rtdb.ref('rooms/' + currentRoom).update({ answeredBy: 'wrong_' + myRole });
+        }
+      });
+    };
+    box.appendChild(b);
+  });
+  $('msg').textContent = '';
+}
+
+function endGame(data) {
+  showScreen('end');
+  let hScore = data.hostScore || 0;
+  let gScore = data.guestScore || 0;
+  let text = `نتيجة المضيف: ${hScore} | نتيجة الضيف: ${gScore}`;
+  if(hScore > gScore) text += ' (فاز المضيف!)';
+  else if(gScore > hScore) text += ' (فاز الضيف!)';
+  else text += ' (تعادل!)';
+  $('endResultText').textContent = text;
+}
+</script>
+</body>
+</html>
