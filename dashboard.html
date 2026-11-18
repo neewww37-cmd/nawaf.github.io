@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة تحكم تحدي المليون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F0FF;--surface:#fff;--surface2:#E9E4FF;--ink:#1C1A3D;--ink2:#5B587F;--line:#D9D3F5;--primary:#5B3DF5;--primary-d:#3D25C4;--on-primary:#fff;--ok:#14A76C;--bad:#E5483C;--warn:#E8890C;--fd:'Baloo Bhaijaan 2','Tajawal',system-ui,sans-serif;--fb:'IBM Plex Sans Arabic','Tajawal',system-ui,sans-serif;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#14122B;--surface:#1F1C3F;--surface2:#2B2756;--ink:#F1EEFF;--ink2:#AAA6D8;--line:#3A3569;--primary:#8D77FF;--primary-d:#5F47DB;--on-primary:#120F2E;--ok:#35D08D;--bad:#FF7A6B;--warn:#FFB44D;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--fb)}
+#app{max-width:1180px;margin:0 auto;padding:14px 16px 48px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:14px}
+.brand{font-family:var(--fd);font-weight:800;font-size:24px;color:var(--primary)}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#who{color:var(--ink2);font-size:13px;direction:ltr}
+.btn{cursor:pointer;padding:6px 16px;border-radius:14px;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;font-weight:600}
+.btn:hover{border-color:var(--primary)}
+.btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary-d);font-family:var(--fd);font-size:18px;padding:9px 28px}
+.gate{max-width:440px;margin:70px auto;text-align:center;background:var(--surface);border:2px solid var(--line);border-bottom-width:6px;border-radius:24px;padding:30px 24px}
+.gate h1{font-family:var(--fd);font-size:34px;margin:0 0 6px;color:var(--primary)}
+.gate p{color:var(--ink2);margin:0 0 16px}
+#gmsg{color:var(--bad);min-height:24px;margin:12px 0 0}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:8px 14px}
+.tile small{display:block;color:var(--ink2);font-size:13px}
+.tile b{font-family:var(--fd);font-size:28px;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile.hot{background:var(--primary);border-color:var(--primary-d)}
+.tile.hot small,.tile.hot b{color:var(--on-primary)}
+.grid2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;margin-bottom:14px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:14px 16px;margin-bottom:14px;min-width:0}
+.grid2 .card{margin-bottom:0}
+.card h2{font-family:var(--fd);font-size:20px;margin:0 0 10px}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.card .row h2{margin:0}
+.bars{display:flex;align-items:flex-end;gap:5px;height:170px}
+.bars .c{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px;font-size:12px;color:var(--ink2)}
+.bars .c i{display:block;width:100%;max-width:34px;background:var(--primary);border-radius:8px 8px 0 0;min-height:3px}
+.hb{display:grid;grid-template-columns:90px minmax(0,1fr) 36px;gap:8px;align-items:center;margin:7px 0;font-size:14px}
+.hb span:nth-child(2){height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.hb i{display:block;height:100%;background:var(--ok);border-radius:6px}
+.hb span:last-child{font-variant-numeric:tabular-nums;text-align:left}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-top:1px solid var(--line)}
+th{color:var(--ink2);font-weight:600;border-top:0;cursor:pointer;user-select:none}
+th.on{color:var(--primary)}
+td{font-variant-numeric:tabular-nums}
+td.n{font-weight:600}
+td.empty{color:var(--ink2);text-align:center;white-space:normal;padding:18px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--line);margin-inline-end:7px}
+.dot.on{background:var(--ok)}
+#q{padding:7px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);width:min(260px,100%)}
+.note{color:var(--ink2);font-size:13px;margin:10px 0 0}
+@media(max-width:820px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">لوحة تحكم تحدي المليون</div>
+    <div class="tools"><span id="who"></span><button class="btn" id="refresh" type="button" hidden>تحديث البيانات</button><button class="btn" id="out" type="button" hidden>تسجيل الخروج</button></div>
+  </header>
+
+  <section class="gate" id="gate">
+    <h1>دخول الأدمن</h1>
+    <p>سجّل الدخول بحساب Google المضاف كأدمن في Firebase.</p>
+    <button class="btn primary" id="in" type="button">الدخول بحساب Google</button>
+    <p id="gmsg" role="status"></p>
+  </section>
+
+  <main id="dash" hidden>
+    <div class="tiles" id="tiles"></div>
+    <div class="grid2">
+      <section class="card"><h2>مكتملو تحدي اليوم آخر 14 يوم</h2><div class="bars" id="dailyBars"></div></section>
+      <section class="card"><h2>الأوسمة الممنوحة</h2><div id="achBars"></div></section>
+    </div>
+    <section class="card" style="margin-top:14px"><h2>المراقبة: البلاغات والحظر</h2><div class="wrap"><table id="modT"></table></div></section>
+    <section class="card">
+      <div class="row"><h2>اللاعبون</h2><input id="q" type="search" placeholder="ابحث بالاسم أو الرمز" aria-label="بحث"></div>
+      <div class="wrap"><table id="usersT"></table></div>
+      <p class="note" id="usersNote"></p>
+    </section>
+    <p class="note">أرقام اللاعبين تُقرأ من نسخة الحساب المحفوظة في Firebase، فتظهر بعد أول مزامنة من جهاز اللاعب. «نشطون» تعني آخر مزامنة خلال 7 أيام.</p>
+  </main>
+</div>
+
+<script type="module">
+import { firebaseConfig as cfg } from './firebase-config.js';
+const G = 'https://www.gstatic.com/firebasejs/10.12.2/';
+const [{ initializeApp }, { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut }, { getDatabase, ref, get, onValue }] =
+  await Promise.all([import(G + 'firebase-app.js'), import(G + 'firebase-auth.js'), import(G + 'firebase-database.js')]);
+
+const $ = (id) => document.getElementById(id);
+const auth = getAuth(initializeApp(cfg)), db = getDatabase();
+const ACH = { mil: 'المليونير', risk: 'المخاطر', pers: 'المثابر', rival: 'المنافس', fast: 'البرق' };
+const TILES = [['t_users', 'اللاعبون', 1], ['t_online', 'متصلون الآن', 1], ['t_act', 'نشطون آخر 7 أيام'], ['t_games', 'ألعاب لُعبت'], ['t_mil', 'مرات ربح المليون'], ['t_acc', 'نسبة الإجابات الصحيحة'], ['t_live', 'مباريات جارية الآن'], ['t_rep', 'بلاغات']];
+const nf = (n) => Number(n || 0).toLocaleString('en-US');
+const J = (s) => { try { return JSON.parse(s) || {}; } catch (e) { return {}; } };
+const fd = (t) => t ? new Date(t).toLocaleDateString('en-GB') : '—';
+const dk = (o) => { const d = new Date(); d.setDate(d.getDate() + o); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+function el(t, c, x) { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+function setT(id, v) { const b = $(id); if (b) b.textContent = v; }
+
+let U = [], unsubs = [], sortK = 'best', sortD = -1;
+
+TILES.forEach(([id, label, hot]) => {
+  const d = el('div', 'tile' + (hot ? ' hot' : '')); d.append(el('small', '', label)); const b = el('b', '', '0'); b.id = id; d.append(b); $('tiles').append(d);
+});
+
+function showGate(msg) {
+  unsubs.forEach((f) => f()); unsubs = [];
+  $('dash').hidden = true; $('gate').hidden = false; $('refresh').hidden = true;
+  $('gmsg').textContent = msg || '';
+}
+
+$('in').onclick = async () => {
+  $('gmsg').textContent = '';
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch (e) { $('gmsg').textContent = e.code === 'auth/unauthorized-domain' ? 'أضف نطاق هذه الصفحة في Firebase: Authentication ثم Settings ثم Authorized domains.' : 'تعذّر الدخول (' + (e.code || 'خطأ') + ')'; }
+};
+$('out').onclick = () => signOut(auth);
+$('refresh').onclick = load;
+$('q').oninput = renderUsers;
+
+onAuthStateChanged(auth, (u) => {
+  $('out').hidden = !u; $('who').textContent = u ? (u.email || '') : '';
+  if (!u) showGate(''); else load();
+});
+
+async function load() {
+  const r = await Promise.allSettled([get(ref(db, 'users')), get(ref(db, 'reports')), get(ref(db, 'online'))]);
+  if (r[0].status === 'rejected') { showGate('هذا الحساب ليس أدمن في قواعد Firebase، أو القواعد لا تسمح له بقراءة بيانات اللاعبين.'); return; }
+  const val = (i) => (r[i].status === 'fulfilled' && r[i].value.val()) || {};
+  const uv = val(0), rv = val(1), ov = val(2), now = Date.now();
+  $('gate').hidden = true; $('dash').hidden = false; $('refresh').hidden = false;
+
+  const names = {}, bc = {}, daily = {}, ach = {};
+  let games = 0, wins = 0, right = 0, asked = 0, active = 0;
+  U = Object.entries(uv).map(([id, u]) => {
+    u = u || {};
+    const k = (u.data && u.data.k) || {}, st = J(k.tm_stats), bz = J(k.tm_bz), ts = (u.data && u.data.ts) || 0;
+    names[id] = String(u.name || id.slice(0, 8));
+    Object.keys(u.blocked || {}).forEach((b) => { bc[b] = (bc[b] || 0) + 1; });
+    Object.keys(st.daily || {}).forEach((d) => { daily[d] = (daily[d] || 0) + 1; });
+    Object.keys(st.ach || {}).forEach((a) => { ach[a] = (ach[a] || 0) + 1; });
+    games += +st.played || 0; wins += +st.wins || 0; right += +st.right || 0; asked += +st.asked || 0;
+    if (ts && now - ts < 7 * 864e5) active++;
+    return { id, name: names[id], code: u.code || '', online: !!ov[id], played: +st.played || 0, wins: +st.wins || 0, best: +st.best || 0, speed: +st.speedBest || 0,
+      duelW: +st.duelW || 0, duelP: +st.duelP || 0, bzw: +bz.w || 0, bzp: +bz.p || 0, friends: Object.keys(u.friends || {}).length, ts };
+  });
+
+  setT('t_users', nf(U.length)); setT('t_online', nf(Object.keys(ov).length)); setT('t_act', nf(active));
+  setT('t_games', nf(games)); setT('t_mil', nf(wins)); setT('t_acc', asked ? Math.round(right / asked * 100) + '%' : '0%');
+  setT('t_rep', nf(Object.keys(rv).length));
+
+  const days = [], vals = []; for (let i = 13; i >= 0; i--) { const d = dk(-i); days.push(d); vals.push(daily[d] || 0); }
+  const mx = Math.max(1, ...vals), bars = $('dailyBars'); bars.textContent = '';
+  days.forEach((d, i) => {
+    const c = el('div', 'c'); c.append(el('span', '', vals[i])); const b = el('i'); b.style.height = (vals[i] / mx * 100) + '%'; c.append(b);
+    c.append(el('span', '', +d.slice(8) + '/' + +d.slice(5, 7))); bars.append(c);
+  });
+
+  const ab = $('achBars'); ab.textContent = '';
+  Object.keys(ACH).forEach((id) => {
+    const n = ach[id] || 0, row = el('div', 'hb'); row.append(el('span', '', ACH[id]));
+    const tr = el('span'), f = el('i'); f.style.width = (U.length ? n / U.length * 100 : 0) + '%'; tr.append(f); row.append(tr); row.append(el('span', '', n)); ab.append(row);
+  });
+
+  const rep = {}; Object.values(rv).forEach((x) => { if (!x || !x.against) return; const m = rep[x.against] || (rep[x.against] = { n: 0, last: 0 }); m.n++; m.last = Math.max(m.last, +x.at || 0); });
+  const mod = [...new Set([...Object.keys(rep), ...Object.keys(bc)])].map((id) => ({ id, name: names[id] || id.slice(0, 8), rep: (rep[id] || {}).n || 0, blk: bc[id] || 0, last: (rep[id] || {}).last || 0 }))
+    .sort((a, b) => b.rep - a.rep || b.blk - a.blk).slice(0, 15);
+  drawTable($('modT'), [['اللاعب'], ['بلاغات ضده'], ['حظره لاعبون'], ['آخر بلاغ']], mod.map((m) => [[m.name, 'n'], m.rep, m.blk, fd(m.last)]), 'ما فيه بلاغات أو حظر حتى الآن.');
+
+  renderUsers(); live();
+}
+
+function live() {
+  unsubs.forEach((f) => f()); unsubs = [];
+  unsubs.push(onValue(ref(db, 'online'), (s) => setT('t_online', nf(Object.keys(s.val() || {}).length)), () => {}));
+  unsubs.push(onValue(ref(db, 'rooms'), (s) => {
+    const v = s.val() || {}; let n = 0;
+    for (const k in v) if (/^(duel|buzz)-/.test(k) && k !== 'buzz-lobby' && Object.keys(v[k] || {}).length >= 2) n++;
+    setT('t_live', nf(n));
+  }, () => {}));
+}
+
+function drawTable(t, heads, rows, emptyMsg, onHead, activeK) {
+  t.textContent = '';
+  const tr = el('tr');
+  heads.forEach((h) => { const c = el('th', h[1] && h[1] === activeK ? 'on' : '', h[0]); if (h[1] && onHead) c.onclick = () => onHead(h[1]); tr.append(c); });
+  const th = el('thead'); th.append(tr); t.append(th);
+  const tb = el('tbody');
+  if (!rows.length) { const r = el('tr'), c = el('td', 'empty', emptyMsg); c.colSpan = heads.length; r.append(c); tb.append(r); }
+  rows.forEach((row) => { const r = el('tr'); row.forEach((v) => { r.append(v instanceof Node ? v : Array.isArray(v) ? el('td', v[1], v[0]) : el('td', '', v)); }); tb.append(r); });
+  t.append(tb);
+}
+
+function renderUsers() {
+  const q = $('q').value.trim().toLowerCase();
+  let list = U.filter((u) => !q || u.name.toLowerCase().includes(q) || u.code.toLowerCase() === q);
+  list.sort((a, b) => sortK === 'name' ? sortD * a.name.localeCompare(b.name, 'ar') : sortD * ((a[sortK] || 0) - (b[sortK] || 0)));
+  const shown = list.slice(0, 200);
+  const heads = [['اللاعب', 'name'], ['الرمز'], ['ألعاب', 'played'], ['المليون', 'wins'], ['أعلى ربح', 'best'], ['التحدي السريع', 'speed'], ['أونلاين فوز/لعب', 'duelW'], ['الثلاثين فوز/لعب', 'bzw'], ['أصدقاء', 'friends'], ['آخر مزامنة', 'ts']];
+  drawTable($('usersT'), heads, shown.map((u) => {
+    const first = el('td', 'n'), d = el('span', 'dot' + (u.online ? ' on' : '')); first.append(d, document.createTextNode(u.name));
+    return [first, u.code, u.played, u.wins, nf(u.best), nf(u.speed), u.duelW + '/' + u.duelP, u.bzw + '/' + u.bzp, u.friends, fd(u.ts)].map((v) => v);
+  }).map((r) => r), 'ما فيه لاعبين مطابقين.', (k) => { if (sortK === k) sortD = -sortD; else { sortK = k; sortD = k === 'name' ? 1 : -1; } renderUsers(); }, sortK);
+  $('usersNote').textContent = list.length > 200 ? 'يعرض أول 200 من ' + nf(list.length) + ' لاعب. استخدم البحث.' : '';
+}
+</script>
+</body>
+</html>
