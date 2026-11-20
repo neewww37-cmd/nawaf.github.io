@@ -174,9 +174,12 @@ button { font-family: inherit; font-size: inherit; color: inherit; }
 .ans[data-state="wrong"] .badge { background: var(--bad); }
 .ans:disabled { cursor: default; }
 .ans.gone { opacity: 0; pointer-events: none; }
+/* تحدي الثلاثين: الإجابات بدون ألوان، وتصير خضراء إذا صحيحة وحمراء إذا خاطئة */
+#bzAns .ans { --tbg: var(--surface); --tedge: var(--line); }
+#bzAns .ans:not([data-state]) .badge { background: var(--line); color: var(--ink); }
 @keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
 
-.lifelines { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 440px; margin: 0 auto 16px; }
+.lifelines { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px; max-width: 520px; margin: 0 auto 16px; }
 .life { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 16px; background: var(--surface); border: 2px solid var(--line); border-bottom-width: 5px; cursor: pointer; min-width: 0; }
 .life .ico { height: 24px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 16px; line-height: 1; color: var(--primary); }
 .life .ico svg { width: 22px; height: 22px; }
@@ -395,6 +398,7 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
       <input class="namebox" id="nameInput" type="text" maxlength="14" placeholder="اسمك للوحة الشرف" aria-label="اسمك" autocomplete="off">
       <div class="cats" id="cats" role="radiogroup" aria-label="فئة الأسئلة"></div>
       <p class="hint" id="catHint"></p>
+      <p class="hint" id="lvlHint"></p>
     </div>
     <div class="modes">
       <div class="mode">
@@ -429,7 +433,7 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
         <div class="share-status" id="duelStatus" role="status"></div>
       </div>
     </div>
-    <div class="modes" style="margin-top:14px"><div class="mode" id="bzCard"><h3>تحدي الثلاثين</h3><p>ثلاثون سؤالاً، وأول من يضغط الزر يجاوب. صح +10 نقاط، وخطأ −7 ويتحول السؤال للخصم. الأكثر نقاطاً يفوز. العب ضد خصم عشوائي أو بغرفة، وادعُ أصدقاءك.</p><button class="btn primary" id="bzOpen" type="button" disabled>ادخل التحدي</button></div></div>
+    <div class="modes" style="margin-top:14px"><div class="mode" id="bzCard"><h3>تحدي الثلاثين</h3><p>ثلاثون سؤالاً، وأول من يضغط الزر يجاوب. صح +10 نقاط، وخطأ −7 ويتحول السؤال للخصم. الأكثر نقاطاً يفوز. العب ضد خصم عشوائي أو بغرفة، وادعُ أصدقاءك.</p><button class="btn primary" id="bzOpen" type="button" disabled>ادخل التحدي</button></div><div class="mode" id="nhCard"><h3>بلا مساعدات</h3><p id="nhText"></p><button class="btn primary" id="nhBtn" type="button" disabled>ابدأ التحدي</button></div></div>
     <div class="switch-row">
       <span id="timedLabel">اللعب بالوقت</span>
       <button class="switch" id="timedBtn" type="button" role="switch" aria-checked="false" aria-labelledby="timedLabel"></button>
@@ -464,7 +468,7 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
         </div>
         <div class="answers" id="answers"></div>
 
-        <div class="lifelines" role="group" aria-label="المساعدات">
+        <div class="lifelines" id="lifeBox" role="group" aria-label="المساعدات"><button class="life" id="lifeJoker" type="button" aria-label="جوكر" hidden><span class="ico">★</span><span class="lab" id="jokerLab">جوكر</span></button>
           <button class="life" id="lifeFifty" type="button" aria-label="حذف إجابتين"><span class="ico">50:50</span><span class="lab">حذف</span></button>
           <button class="life" id="lifeFriend" type="button" aria-label="اتصال بصديق">
             <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span class="lab">اتصال</span>
@@ -902,7 +906,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   var TIME = [30, 40, 50, 60];
   var CIRC = 113.1;
   var TIERS = [{ n: 'سهل جداً', pts: 10 }, { n: 'متوسط', pts: 20 }, { n: 'صعب', pts: 30 }, { n: 'محترف', pts: 50 }];
-  var CATS = [['all', 'منوّع'], ['hist', 'تاريخ وقوانين'], ['sport', 'رياضة'], ['sci', 'علوم وتكنولوجيا'], ['gen', 'ثقافة عامة'], ['ksa', 'معلومات عن المملكة']];
+  var CATS = [['all', 'منوّع'], ['pro', 'أسئلة الخبراء'], ['hist', 'تاريخ وقوانين'], ['sport', 'رياضة'], ['sci', 'علوم وتكنولوجيا'], ['gen', 'ثقافة عامة'], ['ksa', 'معلومات عن المملكة']];
   var DUEL_N = 10, DUEL_T = 20, DUEL_PLAN = [2, 3, 3, 2];
   var ACH = [
     { id: 'mil', n: 'المليونير', d: 'اربح المليون لأول مرة', c: '#D99A00' },
@@ -950,7 +954,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
 
   /* ---------- questions ---------- */
   function pool(c, t, noSrv) {
-    return BANK.filter(function (e) { return !(noSrv && e.s) && (c === 'all' || e.c === c) && (t < 0 || e.t === t); });
+    return BANK.filter(function (e) { return !(noSrv && e.s) && (c === 'all' || c === 'pro' || e.c === c) && (c !== 'pro' || e.t >= 1) && (t < 0 || e.t === t); });
   }
   function mkQ(entry, tierIdx, rand) {
     return { q: entry.q, tier: tierIdx, opts: shuffleWith(entry.a.map(function (t, k) { return { t: t, ok: k === 0 }; }), rand) };
@@ -968,7 +972,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
 
   /* ---------- saved stats, achievements, hall of fame ---------- */
   function loadStats() {
-    var d = { played: 0, wins: 0, best: 0, right: 0, asked: 0, streak: 0, bestStreak: 0, last: '', daily: {}, ach: {}, duelP: 0, duelW: 0, speedBest: 0 };
+    var d = { played: 0, wins: 0, best: 0, right: 0, asked: 0, streak: 0, bestStreak: 0, last: '', daily: {}, ach: {}, duelP: 0, duelW: 0, speedBest: 0, joker: 0 };
     try {
       var s = JSON.parse(store('tm_stats') || 'null');
       if (s && typeof s === 'object') { for (var k in d) { if (s[k] !== undefined) d[k] = s[k]; } }
@@ -986,9 +990,16 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     ST.streak = (ST.last === dayKey(-1)) ? ST.streak + 1 : 1;
     ST.last = today;
     if (ST.streak > ST.bestStreak) ST.bestStreak = ST.streak;
+    if (ST.streak % 3 === 0) giveJoker('سلسلة ' + ST.streak + ' أيام');
   }
   function daysWord(n) { return n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? n + ' أيام' : n + ' يوماً'; }
 
+  var LV = [0, 100, 300, 600, 1000, 1600, 2400, 3400], PRO_LV = 4, NOHELP_GAMES = 10;
+  function xpOf() { return ST.right * 5 + ST.played * 20 + ST.wins * 200; }
+  function lvlOf() { var x = xpOf(), n = 1; LV.forEach(function (t, i) { if (x >= t) n = i + 1; }); return n; }
+  function myTitle() { var l = lvlOf(); return ST.ach.mil ? 'المليونير' : ST.bestStreak >= 7 ? 'صاحب السلسلة' : ST.ach.fast ? 'البرق' : ST.ach.rival ? 'المنافس' : l >= 5 ? 'خبير' : l >= 3 ? 'لاعب متمرس' : 'مبتدئ'; }
+  function flash(text) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = text; $('toasts').appendChild(t); setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 4200); }
+  function giveJoker(why) { ST.joker = (ST.joker || 0) + 1; flash('حصلت على جوكر: ' + why); }
   function medalSvg(color) {
     return '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 3h6l3 11h-6z" fill="' + color + '" opacity=".55"/><path d="M32 3h-6l-3 11h6z" fill="' + color + '" opacity=".85"/><circle cx="24" cy="29" r="14" fill="' + color + '"/><circle cx="24" cy="29" r="10" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2"/><path d="M24 21.5l2.3 4.8 5.2.7-3.8 3.6.9 5.2-4.6-2.5-4.6 2.5.9-5.2-3.8-3.6 5.2-.7z" fill="#fff" fill-opacity=".92"/></svg>';
   }
@@ -1029,6 +1040,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   var lastMode = 'normal', lastRes = null;
   var cat = store('tm_cat') || 'all';
   if (!CATS.some(function (c) { return c[0] === cat; })) cat = 'all';
+  if (cat === 'pro' && lvlOf() < PRO_LV) cat = 'all';
   var speedMin = store('tm_smin') === '3' ? 3 : 2;
   var timed = store('tm_timed') === '1';
 
@@ -1120,8 +1132,9 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'catchip'; b.setAttribute('role', 'radio');
       b.setAttribute('aria-checked', c[0] === cat ? 'true' : 'false');
-      b.textContent = c[1];
-      b.addEventListener('click', function () { cat = c[0]; store('tm_cat', cat); paintCats(); paintHome(); });
+      var lock = c[0] === 'pro' && lvlOf() < PRO_LV;
+      b.textContent = c[1] + (lock ? ' 🔒' : '');
+      b.addEventListener('click', function () { if (lock) { $('catHint').textContent = 'أسئلة الخبراء تنفتح عند المستوى ' + PRO_LV + ' (مستواك ' + lvlOf() + ')'; return; } cat = c[0]; store('tm_cat', cat); paintCats(); paintHome(); });
       box.appendChild(b);
     });
   }
@@ -1159,6 +1172,9 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     }
     $('timedHint').textContent = timed ? 'الوقت: 30 ثانية للأسهل ثم 40 و50 و60 للأصعب' : 'بدون حد زمني للإجابة';
     $('catHint').textContent = cat === 'all' ? 'الأسئلة منوّعة من كل الفئات. تحدي اليوم دائماً منوّع.' : 'الأسئلة من فئة: ' + catLabel(cat) + '. تحدي اليوم دائماً منوّع.';
+    var nh = ST.played >= NOHELP_GAMES; $('nhBtn').disabled = !nh;
+    $('nhText').textContent = nh ? 'خمسة عشر سؤالاً بدون أي مساعدة. لو وصلت للسؤال 10 تاخذ جوكر.' : 'ينفتح بعد ' + NOHELP_GAMES + ' ألعاب (لعبت ' + Math.min(ST.played, NOHELP_GAMES) + ').';
+    $('lvlHint').textContent = 'المستوى ' + lvlOf() + ' · ' + myTitle() + ((ST.joker || 0) ? ' · جوكر ×' + ST.joker : '');
     Array.prototype.forEach.call($('spSeg').children, function (b) { b.setAttribute('aria-checked', (+b.dataset.min === speedMin) ? 'true' : 'false'); });
     paintDuelCard(); $('bzOpen').disabled = roomState !== 'ok';
   }
@@ -1208,10 +1224,10 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     clearTimers(); ac(); earned = [];
     var c = mode === 'daily' ? 'all' : cat;
     var rand = mode === 'daily' ? mulberry(hashStr('tahaddi-' + dayKey(0))) : Math.random;
-    var qs = buildSet(rand, c, null, mode === 'daily'), seen = {};
+    var qs = buildSet(rand, c, c === 'pro' ? [0, 4, 6, 5] : null, mode === 'daily'), seen = {};
     qs.forEach(function (q) { seen[q.q] = true; });
     S = { mode: mode, cat: c, timed: timed, qs: qs, seen: seen, i: 0, sel: null, phase: 'play', lastTier: -1, used: { fifty: false, friend: false, crowd: false, swap: false }, removed: [], opts: [], right: 0, log: [], left: 0, total: 0 };
-    lastMode = 'normal';
+    lastMode = mode === 'nohelp' ? 'nohelp' : 'normal';
     $('confetti').textContent = '';
     show('game');
     renderQ();
@@ -1242,7 +1258,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     $('secured').textContent = fmt(S.i > 0 ? LADDER[S.i - 1] : 0);
     $('qtext').textContent = q.q;
     $('tierPill').textContent = TIERS[q.tier].n;
-    $('catPill').textContent = S.mode === 'daily' ? 'تحدي اليوم' : catLabel(S.cat);
+    $('catPill').textContent = S.mode === 'daily' ? 'تحدي اليوم' : S.mode === 'nohelp' ? 'بلا مساعدات · ' + catLabel(S.cat) : catLabel(S.cat);
     document.body.dataset.tier = String(q.tier);
     if (q.tier >= 2 && S.lastTier !== q.tier && !swapped) { stageToast(q.tier); sfx.stage(q.tier); }
     S.lastTier = q.tier;
@@ -1254,7 +1270,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     $('walkBtn').hidden = false; resetWalk();
     $('nextBtn').hidden = true; $('finishBtn').hidden = true;
     paintLadder(); paintLife(); startTimer(); startSusp();
-    if (S.i === 14 && usedCount() === 0) award('risk');
+    if (S.i === 14 && usedCount() === 0 && !S.used.joker) award('risk');
   }
 
   /* slow suspense pulse from question 10 on, quicker as the stakes rise */
@@ -1374,6 +1390,8 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   /* ---------- lifelines ---------- */
   function paintLife() {
     var live = S.phase === 'play';
+    $('lifeBox').hidden = S.mode === 'nohelp';
+    var jb = $('lifeJoker'); jb.hidden = !(S.mode === 'normal' && (ST.joker || 0) > 0 && !S.used.joker); jb.disabled = !live; $('jokerLab').textContent = 'جوكر ×' + (ST.joker || 0);
     [['fifty', 'lifeFifty'], ['friend', 'lifeFriend'], ['crowd', 'lifeCrowd'], ['swap', 'lifeSwap']].forEach(function (p) {
       var b = $(p[1]);
       b.classList.toggle('used', S.used[p[0]]);
@@ -1381,6 +1399,11 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     });
   }
 
+  function useJoker() {
+    if (S.phase !== 'play' || S.mode !== 'normal' || S.used.joker || !((ST.joker || 0) > 0)) return;
+    S.used.joker = true; ST.joker--; saveStats(); sfx.life();
+    S.sel = rightIdx(); ansEls()[S.sel].dataset.state = 'selected'; $('lockBtn').disabled = false; lockIn();
+  }
   function useFifty() {
     if (S.phase !== 'play' || S.used.fifty) return;
     S.used.fifty = true; sfx.life();
@@ -1547,8 +1570,9 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     saveStats();
     if (kind === 'win') award('mil');
     if (S.mode === 'daily' && ST.streak >= 5) award('pers');
-    var rank = addScore('ladder', amount, S.mode === 'daily' ? 'تحدي اليوم' : catLabel(S.cat));
-    lastRes = res; lastMode = 'normal';
+    var rank = addScore('ladder', amount, S.mode === 'daily' ? 'تحدي اليوم' : S.mode === 'nohelp' ? 'بلا مساعدات' : catLabel(S.cat));
+    lastRes = res; lastMode = S.mode === 'nohelp' ? 'nohelp' : 'normal';
+    if (S.mode === 'nohelp' && reached >= 10) { giveJoker('وصلت للسؤال ' + reached + ' بلا مساعدات'); saveStats(); }
 
     addFacts($('endFacts'), [['إجابات صحيحة', S.right + ' من 15'], ['مساعدات مستخدمة', usedCount() + ' من 4'], ['أعلى ربح لك', fmt(Math.max(prevBest, amount)) + ' ر.س']]);
     fillReview(S.log);
@@ -1962,7 +1986,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
 
   function paintStats() {
     var acc = ST.asked ? Math.round(ST.right / ST.asked * 100) + '%' : '0%';
-    addFacts($('statsFacts'), [['ألعاب لعبتها', ST.played], ['مرات فزت بالمليون', ST.wins], ['أعلى ربح', fmt(ST.best) + ' ر.س'], ['أفضل نتيجة سريعة', fmt(ST.speedBest) + ' نقطة'], ['مواجهات الأونلاين', ST.duelW + ' فوز من ' + ST.duelP], ['نسبة الإجابات الصحيحة', acc], ['سلسلتك الحالية', liveStreak() ? daysWord(liveStreak()).replace('يوم واحد', '1 يوم') : '0'], ['أطول سلسلة', ST.bestStreak ? daysWord(ST.bestStreak).replace('يوم واحد', '1 يوم') : '0']]);
+    addFacts($('statsFacts'), [['ألعاب لعبتها', ST.played], ['مرات فزت بالمليون', ST.wins], ['أعلى ربح', fmt(ST.best) + ' ر.س'], ['أفضل نتيجة سريعة', fmt(ST.speedBest) + ' نقطة'], ['مواجهات الأونلاين', ST.duelW + ' فوز من ' + ST.duelP], ['نسبة الإجابات الصحيحة', acc], ['سلسلتك الحالية', liveStreak() ? daysWord(liveStreak()).replace('يوم واحد', '1 يوم') : '0'], ['أطول سلسلة', ST.bestStreak ? daysWord(ST.bestStreak).replace('يوم واحد', '1 يوم') : '0'], ['المستوى', lvlOf()], ['اللقب', myTitle()], ['جوكر', ST.joker || 0]]);
     var box = $('achList'); box.textContent = '';
     ACH.forEach(function (a) {
       var got = !!ST.ach[a.id];
@@ -2005,7 +2029,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   function paintBzMe() {
     var nm = playerName(); $('bzNameIn').value = ($('nameInput').value || '').trim();
     var av = $('bzAv'); av.textContent = nm.charAt(0); if (bzMe && bzMe.color) av.style.background = bzMe.color;
-    $('bzStat').textContent = 'لعبت ' + BS.p + ' · فزت ' + BS.w + ' · مجموع نقاطك ' + BS.pts;
+    $('bzStat').textContent = 'لعبت ' + BS.p + ' · فزت ' + BS.w + ' · مجموع نقاطك ' + BS.pts + ' · ' + myTitle();
   }
   function setBZ(p) { if (BZ) { try { BZ.nr.presence(p).catch(noop); } catch (e) {} } }
   function setBL(p) { if (BL) { try { BL.nr.presence(p).catch(noop); } catch (e) {} } }
@@ -2078,7 +2102,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     if (role === 'g') bzCloseLobby();
     BZ = { nr: nr, code: code, role: role, qs: null, sq: -1, rk: -1, press: -1, un: [], lastSeen: Date.now(), t0: Date.now(), done: false, names: {}, gn: 1,
       H: { k: 0, ph: 'wait', who: '', att: 0, hs: 0, gs: 0, sq: 0, ev: '', lp: -1, l1: -1 } };
-    setBZ({ n: playerName(), r: role, ver: BZ_VER + '.' + QV });
+    setBZ({ n: playerName(), r: role, ver: BZ_VER + '.' + QV, ttl: myTitle() });
     BZ.un.push(nr.onPeers(bzPeers, function () { bzLeave(true, 'انقطع الاتصال بالغرفة.'); }));
     BZ.tick = setInterval(bzTick, 500);
     show('buzz'); $('bzBuzz').hidden = true; $('bzAns').textContent = ''; $('bzQ').textContent = '';
@@ -2140,7 +2164,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     var B = BZ; if (!B) return;
     var o = bzOpp(); if (!o) return;
     if (o.presence.ver !== BZ_VER + '.' + QV) { bzLeave(true, 'نسخة اللعبة عندك تختلف عن نسخة خصمك. حدّث الصفحة (أو التطبيق) وجرّب مرة ثانية.'); return; }
-    B.lastSeen = Date.now(); B.names[B.role === 'h' ? 'g' : 'h'] = String(o.presence.n || 'الخصم').slice(0, 14);
+    B.lastSeen = Date.now(); B.names[B.role === 'h' ? 'g' : 'h'] = String(o.presence.n || 'الخصم').slice(0, 14); B.opT = String(o.presence.ttl || '').slice(0, 16);
     var em = o.presence.em; if (em && BZ_EM.indexOf(em.e) >= 0 && em.n !== B.seenEm) { B.seenEm = em.n; bzFloat(em.e, B.names[B.role === 'h' ? 'g' : 'h']); }
     if (B.role === 'h') { if (B.done) bzRematchCheck(o); else bzHost(o); } else {
       if ((o.presence.gn || 1) !== B.gn) bzGuestNew(o.presence.gn || 1);
@@ -2220,7 +2244,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     $('bzLeft').textContent = lim ? '⏱ ' + left : '';
     $('bzBarI').style.width = lim ? Math.max(0, 100 - (age / (lim * 1000)) * 100) + '%' : '0%';
     var me = B.role, opp = me === 'h' ? 'g' : 'h', turn = H.ph === 'ans' ? H.who : '';
-    $('bzMeSt').textContent = turn === me ? '⏱ ' + left + ' ث' : ''; $('bzOppSt').textContent = turn === opp ? '⏱ ' + left + ' ث' : '';
+    $('bzMeSt').textContent = turn === me ? '⏱ ' + left + ' ث' : myTitle(); $('bzOppSt').textContent = turn === opp ? '⏱ ' + left + ' ث' : (B.opT || '');
     if (H.ph === 'ans' && H.who === me && left > 0 && left <= 3 && B.tk !== H.sq + ':' + left) { B.tk = H.sq + ':' + left; sfx.tick(); }
   }
   function bzRender(H) {
@@ -2310,6 +2334,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   $('nameInput').value = store('tm_name') || '';
   $('nameInput').addEventListener('input', function () { store('tm_name', $('nameInput').value.slice(0, 14)); });
   $('startBtn').addEventListener('click', function () { startGame('normal'); });
+  $('nhBtn').addEventListener('click', function () { startGame('nohelp'); });
   $('dailyBtn').addEventListener('click', function () { startGame('daily'); });
   $('speedBtn').addEventListener('click', startSpeed);
   $('spQuit').addEventListener('click', endSpeed);
@@ -2317,7 +2342,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     var b = e.target.closest('button'); if (!b) return;
     speedMin = +b.dataset.min === 3 ? 3 : 2; store('tm_smin', String(speedMin)); paintHome();
   });
-  $('againBtn').addEventListener('click', function () { if (lastMode === 'speed') startSpeed(); else startGame('normal'); });
+  $('againBtn').addEventListener('click', function () { if (lastMode === 'speed') startSpeed(); else startGame(lastMode === 'nohelp' ? 'nohelp' : 'normal'); });
   $('homeBtn').addEventListener('click', function () { clearTimers(); $('confetti').textContent = ''; paintHome(); show('intro'); });
   $('shareBtn').addEventListener('click', function () { if (lastRes) copyText(shareText(lastRes), $('shareStatus'), $('shareBox')); });
   $('lockBtn').addEventListener('click', lockIn);
@@ -2328,6 +2353,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   $('lifeFriend').addEventListener('click', useFriend);
   $('lifeCrowd').addEventListener('click', useCrowd);
   $('lifeSwap').addEventListener('click', useSwap);
+  $('lifeJoker').addEventListener('click', useJoker);
   $('timedBtn').addEventListener('click', function () {
     timed = !timed; store('tm_timed', timed ? '1' : '0'); paintTimedSwitch(); paintHome();
   });
@@ -2465,4 +2491,3 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
 
 <script type="module" src="backend.js"></script>
 </body></html>
-
