@@ -353,6 +353,11 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
 .ach b { display: block; font-family: var(--font-display); font-size: 18px; }
 .ach small { display: block; color: var(--ink2); font-size: 12px; line-height: 1.5; }
 .ach.lock { opacity: 0.5; filter: grayscale(1); }
+.avgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 10px; margin: 12px 0 18px; }
+.avbtn { position: relative; aspect-ratio: 1; border-radius: 18px; border: 2px solid var(--line); border-bottom-width: 5px; font-size: 32px; line-height: 1; cursor: pointer; }
+.avbtn[aria-pressed="true"] { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent); }
+.avbtn.lock { opacity: 0.5; filter: grayscale(.8); }
+.avbtn small { position: absolute; bottom: 3px; inset-inline: 0; font-size: 10px; color: var(--ink); }
 .toasts { position: fixed; bottom: 18px; inset-inline: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 9; pointer-events: none; }
 .toast { background: var(--ink); color: var(--bg); padding: 8px 18px; border-radius: 14px; font-weight: 600; display: flex; gap: 8px; align-items: center; animation: rise 0.3s; }
 .toast svg { width: 24px; height: 24px; flex: none; }
@@ -395,6 +400,7 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
       <p class="lead">خمسة عشر سؤالاً تفصلك عن المليون، أو تحدَّ صديقك أونلاين، أو سابق الوقت.</p>
     </div>
     <div class="setup">
+      <button class="btn small" id="avBtn" type="button" style="margin-bottom:8px">🙂 الصورة الرمزية</button><br>
       <input class="namebox" id="nameInput" type="text" maxlength="14" placeholder="اسمك للوحة الشرف" aria-label="اسمك" autocomplete="off">
       <div class="cats" id="cats" role="radiogroup" aria-label="فئة الأسئلة"></div>
       <p class="hint" id="catHint"></p>
@@ -622,6 +628,16 @@ body[data-tier="2"] .pill.tier, body[data-tier="3"] .pill.tier { background: var
       </div>
       <ol class="board-list" id="boardList"></ol>
       <button class="btn primary" id="boardBack" type="button">رجوع</button>
+    </div>
+  </section>
+
+  <!-- avatars -->
+  <section class="screen" id="avatars" hidden>
+    <div class="statsbox">
+      <h2>الصورة الرمزية</h2>
+      <p class="hint" id="avHint">اختر صورتك. الصور المقفلة تنفتح بالمستوى أو بالأوسمة.</p>
+      <div class="avgrid" id="avGrid"></div>
+      <button class="btn primary" id="avBack" type="button">رجوع</button>
     </div>
   </section>
 
@@ -889,6 +905,129 @@ Q("gen", 2, "كم عدد الدول الأعضاء في جامعة الدول ا
 Q("gen", 3, "ما عاصمة نيوزيلندا؟", "ويلينغتون", "أوكلاند", "كرايستشيرش", "كانبرا");
 Q("gen", 3, "من مؤلف رواية «الأمير الصغير»؟", "أنطوان دو سانت إكزوبيري", "فيكتور هوغو", "ألبير كامو", "جول فيرن");
 Q("gen", 3, "ما اسم أعلى شلال في العالم؟", "شلال أنجل", "شلال نياغارا", "شلال فيكتوريا", "شلال إجوازو");
+
+/* ---- دفعة أسئلة إضافية 2 ---- */
+Q("hist", 0, "من هو النبي الذي ابتلعه الحوت؟", "يونس", "أيوب", "يوسف", "موسى");
+Q("hist", 0, "في أي مدينة وُلد النبي محمد ﷺ؟", "مكة المكرمة", "المدينة المنورة", "الطائف", "القدس");
+Q("hist", 0, "من هو الخليفة الراشد الرابع؟", "علي بن أبي طالب", "عثمان بن عفان", "عمر بن الخطاب", "أبو بكر الصديق");
+Q("hist", 0, "ما اسم الكتاب الذي أُنزل على النبي عيسى عليه السلام؟", "الإنجيل", "التوراة", "الزبور", "الصحف");
+Q("hist", 1, "ما اسم الغزوة التي حُفر فيها خندق حول المدينة المنورة؟", "الخندق (الأحزاب)", "بدر", "أحد", "تبوك");
+Q("hist", 1, "من القائد المسلم الملقّب بـ«سيف الله المسلول»؟", "خالد بن الوليد", "عمرو بن العاص", "سعد بن أبي وقاص", "أبو عبيدة بن الجراح");
+Q("hist", 1, "من الملك الذي استقبل المهاجرين المسلمين الأوائل في الحبشة؟", "النجاشي", "هرقل", "كسرى", "المقوقس");
+Q("hist", 1, "في أي عام ميلادي كانت هجرة النبي ﷺ إلى المدينة المنورة؟", "622م", "610م", "632م", "570م");
+Q("hist", 1, "من الإمبراطور الفرنسي الذي هُزم في معركة واترلو؟", "نابليون بونابرت", "لويس السادس عشر", "شارلمان", "شارل ديغول");
+Q("hist", 1, "ما اسم الإمبراطورية التي أسسها جنكيز خان؟", "المغولية", "الفارسية", "الرومانية", "العثمانية");
+Q("hist", 1, "ما اسم عاصمة الإمبراطورية البيزنطية؟", "القسطنطينية", "روما", "أثينا", "دمشق");
+Q("hist", 1, "في أي عام أعلنت الولايات المتحدة استقلالها عن بريطانيا؟", "1776", "1789", "1812", "1865");
+Q("hist", 1, "في أي عام هبط الإنسان على سطح القمر لأول مرة؟", "1969", "1961", "1975", "1957");
+Q("hist", 1, "ما اسم الحرب التي دارت بين شمال الولايات المتحدة وجنوبها بين عامي 1861 و1865؟", "الحرب الأهلية الأمريكية", "حرب الاستقلال", "حرب فيتنام", "الحرب الباردة");
+Q("hist", 2, "ما اسم المدينة التي أسسها الفاطميون عاصمةً لهم في مصر؟", "القاهرة", "الفسطاط", "الإسكندرية", "القيروان");
+Q("hist", 2, "من القائد الذي انتصر على المغول في معركة عين جالوت؟", "سيف الدين قطز", "صلاح الدين الأيوبي", "محمد الفاتح", "نور الدين زنكي");
+Q("hist", 2, "في أي عام هجري كان فتح مكة؟", "8 هـ", "6 هـ", "10 هـ", "2 هـ");
+Q("hist", 2, "من الرئيس الأمريكي الذي أصدر إعلان تحرير العبيد عام 1863؟", "أبراهام لينكولن", "جورج واشنطن", "توماس جيفرسون", "تيودور روزفلت");
+Q("hist", 2, "في أي عام سقط جدار برلين؟", "1989", "1961", "1991", "1975");
+Q("hist", 2, "ضد أي إمبراطورية انتصر المسلمون في معركة القادسية؟", "الفارسية", "الرومانية", "الحبشية", "المغولية");
+Q("hist", 2, "من قائد المسلمين في معركة القادسية؟", "سعد بن أبي وقاص", "خالد بن الوليد", "عمرو بن العاص", "أبو عبيدة بن الجراح");
+Q("hist", 3, "في أي عام ميلادي هُزم أسطول الأرمادا الإسباني أمام إنجلترا؟", "1588", "1492", "1066", "1805");
+Q("hist", 3, "من الجغرافي المسلم الذي رسم خريطة للعالم للملك روجر الثاني؟", "الإدريسي", "الخوارزمي", "البيروني", "ابن حوقل");
+Q("hist", 3, "في أي عام ميلادي وقعت معركة اليرموك؟", "636م", "622م", "711م", "750م");
+Q("sport", 0, "في أي رياضة يُستخدم الريشة والشبكة؟", "الريشة الطائرة", "الإسكواش", "التنس", "كرة الطاولة");
+Q("sport", 0, "كم نقطة تُحتسب للتسديدة من خلف القوس في كرة السلة؟", "3", "2", "1", "4");
+Q("sport", 0, "أي دولة تُعرف بأنها موطن رياضة السومو؟", "اليابان", "الصين", "كوريا", "تايلاند");
+Q("sport", 0, "في أي مدينة يقع نادي الهلال السعودي؟", "الرياض", "جدة", "الدمام", "بريدة");
+Q("sport", 0, "في أي مدينة يقع نادي الاتحاد السعودي؟", "جدة", "الرياض", "الدمام", "مكة المكرمة");
+Q("sport", 1, "كم عدد لاعبي فريق كرة اليد داخل الملعب؟", "7", "6", "5", "11");
+Q("sport", 1, "ما لقب نادي الاتحاد السعودي؟", "العميد", "الزعيم", "العالمي", "الشباب");
+Q("sport", 1, "ما لقب نادي الأهلي السعودي؟", "الراقي", "العميد", "الزعيم", "العالمي");
+Q("sport", 1, "أي ناد إسباني يُلقّب بـ«الميرنغي»؟", "ريال مدريد", "برشلونة", "أتلتيكو مدريد", "إشبيلية");
+Q("sport", 1, "من الملاكم الملقّب بـ«الأعظم»؟", "محمد علي كلاي", "مايك تايسون", "جو فريزر", "فلويد مايويذر");
+Q("sport", 1, "ما اسم سباق الدراجات الشهير الذي يُقام في فرنسا؟", "طواف فرنسا", "طواف إيطاليا", "طواف إسبانيا", "طواف سويسرا");
+Q("sport", 1, "على أي ملعب يلعب نادي مانشستر يونايتد؟", "أولد ترافورد", "أنفيلد", "ستامفورد بريدج", "الاتحاد");
+Q("sport", 1, "ما اسم ملعب نادي ريال مدريد؟", "سانتياغو برنابيو", "كامب نو", "أنفيلد", "أولد ترافورد");
+Q("sport", 1, "أي منتخب فاز بكأس العالم لكرة القدم عام 2022؟", "الأرجنتين", "فرنسا", "كرواتيا", "المغرب");
+Q("sport", 1, "أي دولة ستستضيف كأس العالم لكرة القدم عام 2034؟", "السعودية", "قطر", "الإمارات", "مصر");
+Q("sport", 1, "أي دولتين تشاركان الولايات المتحدة استضافة كأس العالم 2026؟", "المكسيك وكندا", "البرازيل والأرجنتين", "فرنسا وإسبانيا", "اليابان وكوريا الجنوبية");
+Q("sport", 1, "في أي رياضة اشتهر اللاعب تايغر وودز؟", "الغولف", "التنس", "الملاكمة", "السباحة");
+Q("sport", 2, "أي دولتين استضافتا كأس العالم لكرة القدم عام 2002؟", "كوريا الجنوبية واليابان", "ألمانيا وهولندا", "فرنسا وإسبانيا", "البرازيل والأرجنتين");
+Q("sport", 2, "ما اسم بطولة الغولف التي يرتدي الفائز فيها السترة الخضراء؟", "الماسترز", "أوبن بريطانيا", "أوبن أمريكا", "كأس رايدر");
+Q("sport", 2, "كم عدد اللاعبين في فريق الكريكيت داخل الملعب؟", "11", "9", "10", "12");
+Q("sport", 2, "ما اسم الاستاد الذي أُقيم فيه نهائي كأس العالم 2022؟", "لوسيل", "البيت", "خليفة الدولي", "الجنوب");
+Q("sport", 2, "من سجّل الهدف الأول للسعودية أمام الأرجنتين في كأس العالم 2022؟", "صالح الشهري", "سالم الدوسري", "فراس البريكان", "سعود عبدالحميد");
+Q("sport", 2, "في أي مدينة أُقيم أول سباق فورمولا 1 في السعودية؟", "جدة", "الرياض", "الدمام", "مكة المكرمة");
+Q("sci", 0, "ما العضو المسؤول عن التنفس في جسم الإنسان؟", "الرئتان", "القلب", "الكبد", "الكلى");
+Q("sci", 0, "كم عدد الحواس الأساسية عند الإنسان؟", "5", "3", "4", "6");
+Q("sci", 0, "أي حيوان يتميّز بأطول رقبة؟", "الزرافة", "الفيل", "الجمل", "النعامة");
+Q("sci", 0, "ما الحاسة التي تعتمد عليها العين؟", "البصر", "السمع", "الشم", "اللمس");
+Q("sci", 0, "ما اسم الشركة المصنّعة لهاتف آيفون؟", "آبل", "سامسونج", "هواوي", "جوجل");
+Q("sci", 1, "ما اسم أكبر طائر في العالم؟", "النعامة", "النسر", "البطريق", "الطاووس");
+Q("sci", 1, "ما وحدة قياس الجهد الكهربائي؟", "الفولت", "الأمبير", "الواط", "الأوم");
+Q("sci", 1, "ما أصغر وحدة بناء في الكائن الحي؟", "الخلية", "النسيج", "العضو", "الجهاز");
+Q("sci", 1, "ما المعدن الذي يكون سائلاً في درجة حرارة الغرفة؟", "الزئبق", "الحديد", "الألمنيوم", "النحاس");
+Q("sci", 1, "ما اسم عملية صنع النبات لغذائه بالضوء؟", "البناء الضوئي", "التنفس", "التبخر", "الهضم");
+Q("sci", 1, "من مؤسس شركة مايكروسوفت مع بول ألين؟", "بيل غيتس", "ستيف جوبز", "إيلون ماسك", "مارك زوكربيرغ");
+Q("sci", 1, "من أسّس شركة آبل مع ستيف وزنياك؟", "ستيف جوبز", "بيل غيتس", "لاري بيج", "جيف بيزوس");
+Q("sci", 2, "ما وحدة قياس المقاومة الكهربائية؟", "الأوم", "الفولت", "الأمبير", "الواط");
+Q("sci", 2, "ما الحمض الموجود في معدة الإنسان؟", "حمض الهيدروكلوريك", "حمض الكبريتيك", "حمض النيتريك", "حمض الخليك");
+Q("sci", 2, "أي غدة تفرز هرمون الأنسولين؟", "البنكرياس", "الكبد", "الغدة الدرقية", "الكلية");
+Q("sci", 2, "كم يستغرق ضوء الشمس تقريباً للوصول إلى الأرض؟", "8 دقائق", "8 ثوانٍ", "8 ساعات", "دقيقتان");
+Q("sci", 2, "كم عدد غرف القلب عند الإنسان؟", "4", "2", "3", "5");
+Q("sci", 2, "ما أكبر وحدة تخزين بين هذه الوحدات؟", "التيرابايت", "الجيجابايت", "الميجابايت", "الكيلوبايت");
+Q("sci", 2, "أي دولة أرسلت أول إنسان إلى الفضاء؟", "الاتحاد السوفيتي", "الولايات المتحدة", "الصين", "بريطانيا");
+Q("sci", 2, "ما لغة البرمجة التي تعمل في متصفحات الإنترنت لتجعل الصفحات تفاعلية؟", "جافاسكربت", "بايثون", "سي بلس بلس", "روبي");
+Q("sci", 3, "ما أكبر الكواكب الصخرية في المجموعة الشمسية؟", "الأرض", "الزهرة", "المريخ", "عطارد");
+Q("sci", 3, "من العالم الذي رصد أقمار المشتري الأربعة الكبرى بالتلسكوب عام 1610؟", "غاليليو", "كبلر", "نيوتن", "كوبرنيكوس");
+Q("sci", 3, "من العالم المسلم الذي اكتشف الدورة الدموية الصغرى؟", "ابن النفيس", "ابن سينا", "الرازي", "الزهراوي");
+Q("gen", 0, "كم يوماً في السنة الميلادية العادية؟", "365", "360", "366", "364");
+Q("gen", 0, "في أي قارة تقع مصر؟", "أفريقيا", "آسيا", "أوروبا", "أمريكا الجنوبية");
+Q("gen", 0, "أي دولة تشتهر بطبق السوشي؟", "اليابان", "الصين", "كوريا", "تايلاند");
+Q("gen", 0, "أي دولة تشتهر بالبيتزا؟", "إيطاليا", "فرنسا", "إسبانيا", "اليونان");
+Q("gen", 0, "ما عاصمة فرنسا؟", "باريس", "ليون", "مارسيليا", "نيس");
+Q("gen", 0, "ما عاصمة بريطانيا؟", "لندن", "مانشستر", "برمنغهام", "ليفربول");
+Q("gen", 0, "ما عاصمة ألمانيا؟", "برلين", "ميونخ", "هامبورغ", "فرانكفورت");
+Q("gen", 0, "ما عاصمة الأردن؟", "عمّان", "إربد", "الزرقاء", "العقبة");
+Q("gen", 0, "ما عاصمة دولة قطر؟", "الدوحة", "الوكرة", "الخور", "الريان");
+Q("gen", 0, "ما عاصمة العراق؟", "بغداد", "البصرة", "الموصل", "أربيل");
+Q("gen", 0, "ما عاصمة سوريا؟", "دمشق", "حلب", "حمص", "اللاذقية");
+Q("gen", 0, "ما عاصمة لبنان؟", "بيروت", "طرابلس", "صيدا", "زحلة");
+Q("gen", 0, "ما العملة الرسمية في الإمارات؟", "الدرهم", "الريال", "الدينار", "الجنيه");
+Q("gen", 0, "ما العملة الرسمية في الكويت؟", "الدينار الكويتي", "الريال", "الدرهم", "الجنيه");
+Q("gen", 1, "كم يوماً في شهر فبراير في السنة الكبيسة؟", "29", "28", "30", "31");
+Q("gen", 1, "ما عاصمة سلطنة عُمان؟", "مسقط", "صلالة", "صحار", "نزوى");
+Q("gen", 1, "ما عاصمة ليبيا؟", "طرابلس", "بنغازي", "سرت", "مصراتة");
+Q("gen", 1, "ما عاصمة السودان؟", "الخرطوم", "أم درمان", "بورتسودان", "كسلا");
+Q("gen", 1, "ما عاصمة اليمن؟", "صنعاء", "عدن", "تعز", "المكلا");
+Q("gen", 1, "ما عاصمة الصين؟", "بكين", "شنغهاي", "هونغ كونغ", "غوانزو");
+Q("gen", 1, "ما عاصمة الهند؟", "نيودلهي", "مومباي", "كلكتا", "بنغالور");
+Q("gen", 1, "ما عاصمة روسيا؟", "موسكو", "سانت بطرسبرغ", "كييف", "مينسك");
+Q("gen", 1, "ما عاصمة إيطاليا؟", "روما", "ميلانو", "نابولي", "فلورنسا");
+Q("gen", 1, "ما العملة الرسمية في بريطانيا؟", "الجنيه الإسترليني", "اليورو", "الدولار", "الفرنك");
+Q("gen", 2, "ما عاصمة موريتانيا؟", "نواكشوط", "نواذيبو", "كيفة", "أطار");
+Q("gen", 2, "ما عاصمة كوريا الجنوبية؟", "سول", "بوسان", "بيونغ يانغ", "إنتشون");
+Q("gen", 2, "ما عاصمة المكسيك؟", "مكسيكو سيتي", "غوادالاخارا", "مونتيري", "كانكون");
+Q("gen", 2, "ما عاصمة باكستان؟", "إسلام آباد", "كراتشي", "لاهور", "بيشاور");
+Q("gen", 2, "ما أكبر جزيرة في العالم (دون احتساب القارات)؟", "غرينلاند", "مدغشقر", "بورنيو", "سومطرة");
+Q("gen", 2, "ما اللغة الرسمية في البرازيل؟", "البرتغالية", "الإسبانية", "الإنجليزية", "الفرنسية");
+Q("gen", 3, "ما عاصمة نيجيريا؟", "أبوجا", "لاغوس", "كانو", "إبادان");
+Q("gen", 3, "ما عاصمة سويسرا؟", "برن", "زيورخ", "جنيف", "لوزان");
+Q("ksa", 1, "في أي منطقة تقع مدينة أبها؟", "عسير", "جازان", "نجران", "الباحة");
+Q("ksa", 1, "في أي منطقة تقع مدينة بريدة؟", "القصيم", "حائل", "الرياض", "المدينة المنورة");
+Q("ksa", 1, "في أي منطقة تقع مدينة الدمام؟", "المنطقة الشرقية", "الرياض", "مكة المكرمة", "القصيم");
+Q("ksa", 1, "قطار الحرمين السريع يربط مكة المكرمة بأي مدينة؟", "المدينة المنورة", "الرياض", "الدمام", "تبوك");
+Q("ksa", 1, "ما اسم الموسم الترفيهي الكبير الذي يُقام في الرياض؟", "موسم الرياض", "موسم جدة", "شتاء طنطورة", "موسم الدرعية");
+Q("ksa", 1, "أي دولة تجاور المملكة من الجنوب؟", "اليمن", "الأردن", "الكويت", "العراق");
+Q("ksa", 1, "ما اسم الجسر الذي يربط السعودية بالبحرين؟", "جسر الملك فهد", "جسر الملك سلمان", "جسر الملك خالد", "جسر الشيخ زايد");
+Q("ksa", 1, "ما اسم شركة الاتصالات السعودية الأكبر؟", "stc", "موبايلي", "زين", "سلام");
+Q("ksa", 1, "كم عدد أشواط الطواف حول الكعبة؟", "7", "3", "5", "9");
+Q("ksa", 1, "ما اسم دوري كرة القدم للمحترفين في السعودية؟", "دوري روشن", "دوري يلو", "كأس الملك", "كأس السوبر");
+Q("ksa", 2, "ما اسم أكبر ميناء على البحر الأحمر في المملكة؟", "ميناء جدة الإسلامي", "ميناء ينبع", "ميناء جازان", "ميناء الملك فهد الصناعي");
+Q("ksa", 2, "ما اسم أكبر ميناء على الخليج العربي في المملكة؟", "ميناء الملك عبدالعزيز بالدمام", "ميناء الجبيل", "ميناء رأس تنورة", "ميناء جدة الإسلامي");
+Q("ksa", 2, "ما اسم المهرجان السنوي الشهير للإبل في المملكة؟", "مهرجان الملك عبدالعزيز للإبل", "مهرجان الجنادرية", "مهرجان سوق عكاظ", "مهرجان الصقور");
+Q("ksa", 2, "ما اسم الجبل الذي يقع فيه الغار الذي اختبأ فيه النبي ﷺ أثناء الهجرة؟", "جبل ثور", "جبل حراء", "جبل أحد", "جبل عرفات");
+Q("ksa", 2, "ما اسم المشعر الذي يبيت فيه الحجاج ليلة العاشر من ذي الحجة؟", "مزدلفة", "منى", "عرفة", "التنعيم");
+Q("ksa", 2, "ما اسم الحي التاريخي في الدرعية المسجّل في قائمة التراث العالمي؟", "حي الطريف", "قصر المربع", "المصمك", "حي الشميسي");
+Q("ksa", 2, "ما اسم مطار الدمام الدولي؟", "مطار الملك فهد", "مطار الملك خالد", "مطار الملك عبدالعزيز", "مطار الأمير محمد بن عبدالعزيز");
+Q("ksa", 2, "ما اسم مطار المدينة المنورة الدولي؟", "مطار الأمير محمد بن عبدالعزيز", "مطار الملك خالد", "مطار الملك فهد", "مطار الملك عبدالعزيز");
+Q("ksa", 3, "ما اسم ميقات أهل المدينة المنورة؟", "ذو الحليفة", "قرن المنازل", "يلملم", "الجحفة");
 </script>
 
 <script>
@@ -972,7 +1111,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
 
   /* ---------- saved stats, achievements, hall of fame ---------- */
   function loadStats() {
-    var d = { played: 0, wins: 0, best: 0, right: 0, asked: 0, streak: 0, bestStreak: 0, last: '', daily: {}, ach: {}, duelP: 0, duelW: 0, speedBest: 0, joker: 0 };
+    var d = { played: 0, wins: 0, best: 0, right: 0, asked: 0, streak: 0, bestStreak: 0, last: '', daily: {}, ach: {}, duelP: 0, duelW: 0, speedBest: 0, joker: 0, av: -1 };
     try {
       var s = JSON.parse(store('tm_stats') || 'null');
       if (s && typeof s === 'object') { for (var k in d) { if (s[k] !== undefined) d[k] = s[k]; } }
@@ -999,10 +1138,44 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   function lvlOf() { var x = xpOf(), n = 1; LV.forEach(function (t, i) { if (x >= t) n = i + 1; }); return n; }
   function myTitle() { var l = lvlOf(); return ST.ach.mil ? 'المليونير' : ST.bestStreak >= 7 ? 'صاحب السلسلة' : ST.ach.fast ? 'البرق' : ST.ach.rival ? 'المنافس' : l >= 5 ? 'خبير' : l >= 3 ? 'لاعب متمرس' : 'مبتدئ'; }
   function flash(text) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = text; $('toasts').appendChild(t); setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 4200); }
-  function giveJoker(why) { ST.joker = (ST.joker || 0) + 1; flash('حصلت على جوكر: ' + why); }
-  function medalSvg(color) {
-    return '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 3h6l3 11h-6z" fill="' + color + '" opacity=".55"/><path d="M32 3h-6l-3 11h6z" fill="' + color + '" opacity=".85"/><circle cx="24" cy="29" r="14" fill="' + color + '"/><circle cx="24" cy="29" r="10" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2"/><path d="M24 21.5l2.3 4.8 5.2.7-3.8 3.6.9 5.2-4.6-2.5-4.6 2.5.9-5.2-3.8-3.6 5.2-.7z" fill="#fff" fill-opacity=".92"/></svg>';
+  var AV = [['🦁', 1], ['🐯', 1], ['🐺', 1], ['🦊', 1], ['🐼', 1], ['🐨', 1], ['🦅', 1], ['🦉', 1], ['🐪', 1], ['🐎', 1], ['🦄', 2], ['🐲', 2], ['🦈', 2], ['🐬', 2], ['🦋', 2], ['🐢', 2], ['🚀', 3], ['⚽', 3], ['🏀', 3], ['🎯', 3], ['🎮', 3], ['🎧', 3], ['🎩', 4], ['🧠', 4], ['🤖', 4], ['👽', 4], ['💎', 5], ['🔥', 5], ['⭐', 5], ['🌙', 5], ['☀️', 6], ['🌩️', 6], ['👑', 7], ['🏆', 7], ['🏅', 'mil'], ['🦸', 'risk'], ['🗓️', 'pers'], ['🥊', 'rival'], ['⚡', 'fast']];
+  function avOf(i) { return (i >= 0 && i < AV.length) ? AV[i] : null; }
+  function avOpen(a) { return typeof a[1] === 'number' ? lvlOf() >= a[1] : !!ST.ach[a[1]]; }
+  function avEmoji() { var a = avOf(ST.av); return a && avOpen(a) ? a[0] : ''; }
+  function avMine() { var a = avOf(ST.av); return a && avOpen(a) ? ST.av : -1; }
+  function achName(id) { for (var i = 0; i < ACH.length; i++) if (ACH[i].id === id) return ACH[i].n; return ''; }
+  function setAvatar(el, name) { var e = avEmoji(); el.textContent = e || String(name || '').charAt(0); el.style.fontSize = e ? '26px' : ''; }
+  function paintAvBtn() { $('avBtn').textContent = (avEmoji() || '🙂') + ' الصورة الرمزية'; }
+  function paintAvatars() {
+    var box = $('avGrid'); box.textContent = '';
+    AV.forEach(function (a, i) {
+      var open = avOpen(a), b = document.createElement('button');
+      b.type = 'button'; b.className = 'avbtn' + (open ? '' : ' lock'); b.setAttribute('aria-pressed', ST.av === i ? 'true' : 'false'); b.setAttribute('aria-label', a[0]);
+      b.textContent = a[0]; b.style.background = 'color-mix(in srgb, hsl(' + (i * 47 % 360) + ' 70% 55%) 24%, var(--surface))';
+      if (!open) { var sm = document.createElement('small'); sm.textContent = typeof a[1] === 'number' ? 'مستوى ' + a[1] : 'وسام'; b.appendChild(sm); }
+      b.addEventListener('click', function () {
+        if (!open) { $('avHint').textContent = typeof a[1] === 'number' ? 'تنفتح عند المستوى ' + a[1] + ' (مستواك ' + lvlOf() + ')' : 'تنفتح بوسام «' + achName(a[1]) + '»'; return; }
+        ST.av = i; saveStats(); paintAvatars(); paintAvBtn(); $('avHint').textContent = 'تم اختيار صورتك';
+      });
+      box.appendChild(b);
+    });
   }
+  function giveJoker(why) { ST.joker = (ST.joker || 0) + 1; flash('حصلت على جوكر: ' + why); }
+  function medalSvg(color, id) {
+    var g = 'mg' + id, glyph = {
+      mil: '<path d="M16 42l-4-20 11 8 9-14 9 14 11-8-4 20z"/><rect x="16" y="45" width="32" height="5" rx="2.5"/>',
+      risk: '<path d="M32 12l15 8v11c0 11-6 17-15 21-9-4-15-10-15-21V20z"/><path d="M25 32l5 5 9-10" stroke="#000" stroke-opacity=".28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      pers: '<path d="M32 10c3 10 13 14 12 26 0 9-6 15-12 15s-12-6-12-14c0-6 5-9 6-15 2 3 3 4 5 4-1-5-1-10 1-16z"/>',
+      rival: '<path d="M16 16l32 32M48 16L16 48" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="16" cy="16" r="4"/><circle cx="48" cy="16" r="4"/>',
+      fast: '<path d="M38 10L18 36h13l-4 18 21-28H34z"/>'
+    }[id] || '<path d="M32 12l5.6 12 13 1.7-9.5 9 2.4 13L32 41.5 20.5 47.7l2.4-13-9.5-9 13-1.7z"/>';
+    return '<svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="' + g + '" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".45" stop-color="' + color + '" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></radialGradient></defs>'
+      + '<path d="M19 3h10l6 18H25z" fill="' + color + '" opacity=".6"/><path d="M45 3H35l-6 18h10z" fill="' + color + '" opacity=".95"/>'
+      + '<circle cx="32" cy="40" r="21" fill="' + color + '"/><circle cx="32" cy="40" r="21" fill="url(#' + g + ')"/>'
+      + '<circle cx="32" cy="40" r="21" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2"/><circle cx="32" cy="40" r="16.5" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1.4"/>'
+      + '<g transform="translate(32 40) scale(.5) translate(-32 -32)" fill="#fff" fill-opacity=".96">' + glyph + '</g><circle cx="22" cy="29" r="2.2" fill="#fff" fill-opacity=".85"/></svg>';
+  }
+
   var earned = [];
   function award(id) {
     if (ST.ach[id]) return;
@@ -1011,7 +1184,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     if (!a) return;
     earned.push(a.n);
     var t = document.createElement('div'); t.className = 'toast';
-    t.innerHTML = medalSvg(a.c);
+    t.innerHTML = medalSvg(a.c, a.id);
     t.appendChild(document.createTextNode('وسام جديد: ' + a.n));
     $('toasts').appendChild(t);
     setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 4200);
@@ -1116,7 +1289,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   }
 
   /* ---------- screens ---------- */
-  var SCREENS = ['intro', 'bzLobby', 'buzz', 'friends', 'game', 'speed', 'lobby', 'duel', 'duelEnd', 'end', 'board', 'stats'];
+  var SCREENS = ['avatars', 'intro', 'bzLobby', 'buzz', 'friends', 'game', 'speed', 'lobby', 'duel', 'duelEnd', 'end', 'board', 'stats'];
   function show(name) {
     SCREENS.forEach(function (n) { $(n).hidden = (n !== name); });
     if (name !== 'game' && name !== 'speed') document.body.dataset.tier = '0';
@@ -1991,7 +2164,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     ACH.forEach(function (a) {
       var got = !!ST.ach[a.id];
       var d = document.createElement('div'); d.className = 'ach' + (got ? '' : ' lock');
-      d.innerHTML = medalSvg(a.c);
+      d.innerHTML = medalSvg(a.c, a.id);
       var b = document.createElement('b'); b.textContent = a.n;
       var s = document.createElement('small'); s.textContent = got ? 'حصلت عليه ' + niceDate(ST.ach[a.id]) : a.d;
       d.appendChild(b); d.appendChild(s); box.appendChild(d);
@@ -2007,7 +2180,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     return c;
   }
   function cleanCode(v) { return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); }
-  var BZ_VER = 4; // bump on every release: both players must run the same question set
+  var BZ_VER = 5; // bump on every release: both players must run the same question set
   var QV = '0'; // version of the extra questions loaded from the dashboard
   function applyQs(d) {
     if (!d || !d.items || BZ || D || QV !== '0') return;
@@ -2028,7 +2201,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   function saveBS() { store('tm_bz', JSON.stringify(BS)); }
   function paintBzMe() {
     var nm = playerName(); $('bzNameIn').value = ($('nameInput').value || '').trim();
-    var av = $('bzAv'); av.textContent = nm.charAt(0); if (bzMe && bzMe.color) av.style.background = bzMe.color;
+    var av = $('bzAv'); setAvatar(av, nm); if (bzMe && bzMe.color) av.style.background = bzMe.color;
     $('bzStat').textContent = 'لعبت ' + BS.p + ' · فزت ' + BS.w + ' · مجموع نقاطك ' + BS.pts + ' · ' + myTitle();
   }
   function setBZ(p) { if (BZ) { try { BZ.nr.presence(p).catch(noop); } catch (e) {} } }
@@ -2102,7 +2275,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     if (role === 'g') bzCloseLobby();
     BZ = { nr: nr, code: code, role: role, qs: null, sq: -1, rk: -1, press: -1, un: [], lastSeen: Date.now(), t0: Date.now(), done: false, names: {}, gn: 1,
       H: { k: 0, ph: 'wait', who: '', att: 0, hs: 0, gs: 0, sq: 0, ev: '', lp: -1, l1: -1 } };
-    setBZ({ n: playerName(), r: role, ver: BZ_VER + '.' + QV, ttl: myTitle() });
+    setBZ({ n: playerName(), r: role, ver: BZ_VER + '.' + QV, ttl: myTitle(), av: avMine() });
     BZ.un.push(nr.onPeers(bzPeers, function () { bzLeave(true, 'انقطع الاتصال بالغرفة.'); }));
     BZ.tick = setInterval(bzTick, 500);
     show('buzz'); $('bzBuzz').hidden = true; $('bzAns').textContent = ''; $('bzQ').textContent = '';
@@ -2143,14 +2316,24 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     var B = BZ; if (!B || BZ_EM.indexOf(e) < 0) return; var n = Date.now(); if (n - (B.emT || 0) < 1500) return;
     B.emT = n; B.emN = (B.emN || 0) + 1; setBZ({ em: { e: e, n: B.emN } }); bzFloat(e, 'أنت');
   }
-  function bzDecideSoon() { var B = BZ; if (B.decT) return; B.decT = setTimeout(function () { B.decT = null; bzDecide(); }, 450); }
+  function bzPress() {
+    var B = BZ, H = B.H, o = bzOpp(), me = B.nr.peers().filter(function (p) { return p.isMe; })[0];
+    var hp = me && me.presence.hk === H.k && me.presence.hg === B.gn ? (typeof me.presence.ht === 'number' ? me.presence.ht : 1e9) : null;
+    var gp = o && o.presence.bk === H.k && o.presence.bg === B.gn ? (typeof o.presence.bt === 'number' ? o.presence.bt : 1e9) : null;
+    return { hp: hp, gp: gp, o: o, me: me };
+  }
+  /* الأسرع هو صاحب أقل زمن رد فعل، كل واحد يقيسه من لحظة ظهور السؤال عنده، فما يأخذ المضيف أفضلية بسبب سرعة الشبكة */
   function bzDecide() {
     var B = BZ; if (!B || B.role !== 'h' || B.H.ph !== 'open') return;
-    var H = B.H, o = bzOpp(), me = B.nr.peers().filter(function (p) { return p.isMe; })[0];
-    var hp = me && me.presence.hk === H.k && me.presence.hg === B.gn ? (me.presence.ht || Infinity) : null;
-    var gp = o && o.presence.bk === H.k && o.presence.bg === B.gn ? (o.presence.bt || Infinity) : null;
-    if (hp === null && gp === null) { if (B.press === H.k) bzTake('h'); return; }
-    bzTake(gp === null ? 'h' : hp === null ? 'g' : (hp <= gp ? 'h' : 'g'));
+    var r = bzPress(), hp = r.hp, gp = r.gp;
+    if (hp === null && gp === null) { if (B.press === B.H.k) bzTake('h'); return; }
+    bzTake(gp === null ? 'h' : hp === null ? 'g' : hp < gp ? 'h' : hp > gp ? 'g' : (r.me.id < r.o.id ? 'h' : 'g'));
+  }
+  function bzDecideSoon() {
+    var B = BZ; if (!B || B.role !== 'h') return;
+    var r = bzPress();
+    if (r.hp !== null && r.gp !== null) { clearTimeout(B.decT); B.decT = null; bzDecide(); return; }
+    if (B.decT) return; B.decT = setTimeout(function () { B.decT = null; bzDecide(); }, Math.min(1500, Math.max(600, (B.rtt || 0) + 350)));
   }
   function bzOpp() {
     var B = BZ, want = B.role === 'h' ? 'g' : 'h';
@@ -2164,7 +2347,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     var B = BZ; if (!B) return;
     var o = bzOpp(); if (!o) return;
     if (o.presence.ver !== BZ_VER + '.' + QV) { bzLeave(true, 'نسخة اللعبة عندك تختلف عن نسخة خصمك. حدّث الصفحة (أو التطبيق) وجرّب مرة ثانية.'); return; }
-    B.lastSeen = Date.now(); B.names[B.role === 'h' ? 'g' : 'h'] = String(o.presence.n || 'الخصم').slice(0, 14); B.opT = String(o.presence.ttl || '').slice(0, 16);
+    B.lastSeen = Date.now(); B.names[B.role === 'h' ? 'g' : 'h'] = String(o.presence.n || 'الخصم').slice(0, 14); B.opT = String(o.presence.ttl || '').slice(0, 16); B.opAv = (avOf(+o.presence.av) || [''])[0];
     var em = o.presence.em; if (em && BZ_EM.indexOf(em.e) >= 0 && em.n !== B.seenEm) { B.seenEm = em.n; bzFloat(em.e, B.names[B.role === 'h' ? 'g' : 'h']); }
     if (B.role === 'h') { if (B.done) bzRematchCheck(o); else bzHost(o); } else {
       if ((o.presence.gn || 1) !== B.gn) bzGuestNew(o.presence.gn || 1);
@@ -2187,7 +2370,11 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
       setBZ({ sd: sd, ct: cat, H: H, gn: B.gn }); bzRender(H); return;
     }
     var gp = o.presence;
-    if (H.ph === 'open' && gp.bk === H.k && gp.bg === B.gn) bzDecideSoon();
+    if (H.ph === 'open' && gp.bk === H.k && gp.bg === B.gn) {
+      /* نقدّر تأخير شبكة الخصم من وصول ضغطته، ونوسّع مهلة الحسم له عشان ما يخسر بسبب النت */
+      if (B.rttK !== H.k + ':' + B.gn && typeof gp.bt === 'number') { B.rttK = H.k + ':' + B.gn; var d = Date.now() - (B.openAt || 0) - gp.bt; if (d > 0 && d < 5000) B.rtt = B.rtt ? B.rtt * 0.6 + d * 0.4 : d; }
+      bzDecideSoon();
+    }
     else if (H.ph === 'ans' && H.who === 'g' && gp.pg === B.gn && gp.pk === H.k * 3 + H.att && typeof gp.pi === 'number' && B.lastPk !== gp.pk) { B.lastPk = gp.pk; bzEval(gp.pi); }
   }
   function bzPub() { BZ.H.sq++; BZ.t0 = Date.now(); setBZ({ H: BZ.H }); bzRender(BZ.H); }
@@ -2212,7 +2399,8 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     var B = BZ; if (!B || !B.qs) return; var H = B.H;
     if (H.ph !== 'open' || B.press === H.k) return;
     B.press = H.k; $('bzBuzz').disabled = true; sfx.pick();
-    if (B.role === 'h') { setBZ({ hk: H.k, hg: B.gn, ht: SVTS }); bzDecideSoon(); } else setBZ({ bk: H.k, bg: B.gn, bt: SVTS });
+    var rt = Math.max(0, Date.now() - (B.openAt || Date.now()));
+    if (B.role === 'h') { setBZ({ hk: H.k, hg: B.gn, ht: rt }); bzDecideSoon(); } else setBZ({ bk: H.k, bg: B.gn, bt: rt });
   }
   function bzPick(i) {
     var B = BZ; if (!B) return; var H = B.H;
@@ -2250,7 +2438,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   function bzRender(H) {
     var B = BZ; if (!B || !B.qs) return;
     var me = B.role, opp = me === 'h' ? 'g' : 'h';
-    $('bzMeN').textContent = playerName(); $('bzOppN').textContent = B.names[opp] || 'الخصم';
+    $('bzMeN').textContent = (avEmoji() ? avEmoji() + ' ' : '') + playerName(); $('bzOppN').textContent = (B.opAv ? B.opAv + ' ' : '') + (B.names[opp] || 'الخصم');
     $('bzMeSc').textContent = H[me + 's']; $('bzOppSc').textContent = H[opp + 's'];
     if (H.ph === 'end') { bzEnd(H); return; }
     var q = B.qs[H.k], right = q.opts.findIndex(function (o) { return o.ok; });
@@ -2268,6 +2456,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
       } else if (i === H.l1) st = 'wrong';
       if (st) b.dataset.state = st; else delete b.dataset.state;
     });
+    if (H.ph === 'open' && B.openKey !== H.k + ':' + B.gn) { B.openKey = H.k + ':' + B.gn; B.openAt = Date.now(); }
     var bz = $('bzBuzz'); bz.hidden = H.ph !== 'open'; bz.disabled = B.press === H.k;
     var m = $('bzM'), t = '', c = 'sp-msg';
     if (H.ph === 'open') t = 'أول من يضغط الزر يجاوب!';
@@ -2334,6 +2523,8 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   $('nameInput').value = store('tm_name') || '';
   $('nameInput').addEventListener('input', function () { store('tm_name', $('nameInput').value.slice(0, 14)); });
   $('startBtn').addEventListener('click', function () { startGame('normal'); });
+  $('avBtn').addEventListener('click', function () { paintAvatars(); show('avatars'); });
+  $('avBack').addEventListener('click', function () { paintHome(); show('intro'); });
   $('nhBtn').addEventListener('click', function () { startGame('nohelp'); });
   $('dailyBtn').addEventListener('click', function () { startGame('daily'); });
   $('speedBtn').addEventListener('click', startSpeed);
@@ -2420,7 +2611,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   function openFriends() {
     var F = window.tmFriends; if (!F) { alert('سجّل دخولك من زر «حسابي» أول'); return; }
     show('friends'); frMsg(''); frClose();
-    var nm = playerName(); $('frName').textContent = nm; $('frAv').textContent = nm.charAt(0);
+    var nm = playerName(); $('frName').textContent = nm; setAvatar($('frAv'), nm);
     $('frStat').textContent = 'لعبت ' + BS.p + ' · فزت ' + BS.w + ' · نقاطك ' + BS.pts;
     F.myCode().then(function (c) { $('frCode').textContent = c; }).catch(function () { $('frCode').textContent = '------'; });
     frUn.push(F.onRequests(function (rs) {
@@ -2472,7 +2663,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
   $('bzCreate').addEventListener('click', function () { bzCreate(null); });
   $('bzJoin').addEventListener('click', function () { bzJoinCode(cleanCode($('bzCode').value)); });
   $('bzBack').addEventListener('click', function () { bzCloseLobby(); paintHome(); show('intro'); });
-  $('bzNameIn').addEventListener('input', function () { var v = $('bzNameIn').value.slice(0, 14); $('nameInput').value = v; store('tm_name', v); $('bzAv').textContent = (v.trim() || 'ل').charAt(0); });
+  $('bzNameIn').addEventListener('input', function () { var v = $('bzNameIn').value.slice(0, 14); $('nameInput').value = v; store('tm_name', v); setAvatar($('bzAv'), v.trim() || 'ل'); });
   $('bzBuzz').addEventListener('click', bzBuzzClick);
   $('bzQuit').addEventListener('click', bzQuit);
   $('bzBlockBtn').addEventListener('click', function () { var o = BZ && bzOpp(); if (o && window.tmBlock) Promise.resolve(window.tmBlock(o.id, o.presence.n)).then(function (ok) { if (ok && BZ) bzLeave(true); }); });
@@ -2485,7 +2676,7 @@ window.claude={use:function(n){return pr.then(function(b){return b&&b[n]?b[n]:nu
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); bzBuzzClick(); }
     else if (e.key >= '1' && e.key <= '4') bzPick(+e.key - 1);
   });
-  buildLadder(); paintSound(); paintTimedSwitch(); paintCats(); paintHome();
+  buildLadder(); paintSound(); paintTimedSwitch(); paintCats(); paintHome(); paintAvBtn();
 })();
 </script>
 
